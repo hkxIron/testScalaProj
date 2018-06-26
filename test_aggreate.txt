@@ -1,0 +1,7 @@
+Aggregate By Key unique Results
+bar -> C,D
+foo -> B,A
+------------------
+Aggregate By Key sum Results
+bar -> 3
+foo -> 5
