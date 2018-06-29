@@ -3,7 +3,7 @@ import org.apache.spark.{SparkContext, SparkConf}
 
 object testRdd2 {
     def main(args: Array[String]) {
-        val conf = new SparkConf().setAppName("SingleRDD").setMaster("local[8]")
+        val conf = new SparkConf().setAppName("SingleRDD").setMaster("local[1]")
         val sc = new SparkContext(conf)
         // 设置日志等级
         sc.setLogLevel("WARN")
