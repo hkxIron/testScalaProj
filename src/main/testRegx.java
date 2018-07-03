@@ -7,6 +7,16 @@ public class testRegx {
     public static void main(String[] args){
         {
             System.out.println("====================");
+            String str = "潮汐|下雨";
+            // str = "潮汐下雨";
+            String[] arr = str.split("\\|");
+            System.out.println(arr.length);
+            int randomIndex = (int)(arr.length * Math.random());
+            System.out.println(arr[randomIndex]);
+        }
+
+        {
+            System.out.println("====================");
             //String str = "大白象";
         /* (?:pattern)
         匹配 pattern 但不捕获该匹配的子表达式，即它是一个非捕获匹配，不存储供以后使用的匹配。
