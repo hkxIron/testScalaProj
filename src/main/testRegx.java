@@ -5,6 +5,24 @@ public class testRegx {
     enum ObjType{ english, math, computer };
 
     public static void main(String[] args){
+
+        {
+            System.out.println("====================");
+            String str = "你给我放鞭炮";
+            String pattern = "^(?:小知同学|小知)?(?:你能不能|请|你？让我|你？给我们?)?(?:再放|在放|你?会?放点?)(?:[一二俩两三仨四五])?(?:个)?(.+?)(?:来?听听|好吗|好嘛|吗|啊|吧|呗)?$";
+            Matcher preSufPattern = Pattern.compile(pattern).matcher(str);
+            if (preSufPattern.find()) {
+                System.out.println("group count:" + preSufPattern.groupCount());
+                String noPreSufStr = preSufPattern.group(1);
+                System.out.println("group:" + noPreSufStr);
+            }
+        }
+        {
+            System.out.println("====================");
+            String xx = null;
+            String str = String.format("test str: %s",xx);
+            System.out.println(str);
+        }
         {
             System.out.println("====================");
             String str = "潮汐|下雨";
@@ -198,5 +216,78 @@ public class testRegx {
             System.out.println(sb.toString());
         }
 
+        {
+            // |作用域为所有连续的字（而不是其中的一个字），且不会被?断开
+            // ?只作用于前面一个字符
+            // ? 比|结合性更强, "让我|你?给我们?"解释成：（让我　or 你?(给我)们？
+            System.out.println("====================--");
+            String str = "你让我"; // 1
+            str = "你能不能"; //1
+            str ="请";// 1
+            str ="让我"; // 1
+            str ="你让我"; // 1
+            str = "你给我们"; // 1
+            str = "给我们"; // 1
+            str = "给我"; // 1, ?作用于前面一个字符
+            str = "给"; // 0
+            str = "你"; // 0
+            str = "一个"; // 0
+            str = "给你一个"; // 1
+            str = "给你一"; // 1
+            String pattern;
+           // String pattern;
+            pattern = "^(你能不能|请|你?让我|你?给我们?|给你来?一个?)(?:.?)$"; //
+            Matcher preSufPattern = Pattern.compile(pattern).matcher(str);
+            if (preSufPattern.find()) {
+                System.out.println("group count:" + preSufPattern.groupCount());
+                String noPreSufStr = preSufPattern.group(1);
+                System.out.println("group:" + noPreSufStr);
+            }
+        }
+        {
+            System.out.println("====================");
+            String str = "";
+            // 匹配结果，往往还与pattern里的先后顺序有关
+            String pattern1 = "^你?会不?会?(BBOX|bboxman|bbox|逼爆渴斯|逼爆克斯|bboss|逼boss|比boss|逼爆克死|逼抱死|BBOXMAN|逼爆case|逼爆是|被boss|唱bboss|唱壁报克斯|逼爆|口技|呼噜|喷嚏|打嗝|咳嗽)(?:吗|啊|嘛)?";
+            String pattern2 = "^你?会不?会?(BBOXMAN|bboxman|BBOX|bbox|逼爆渴斯|逼爆克斯|bboss|逼boss|比boss|逼爆克死|逼抱死|逼爆case|逼爆是|被boss|唱bboss|唱壁报克斯|逼爆|口技|呼噜|喷嚏|打嗝|咳嗽)(?:吗|啊|嘛)?";
+            str = "你会BBOXMAN";
+            {
+                Matcher m1 = Pattern.compile(pattern1).matcher(str);
+                if(m1.find()) { // 记住：只有在find时才会去匹配,如果不加find,就不会执行匹配动作
+                    System.out.println("group count:" + m1.groupCount());
+                    System.out.println("group 1:" + m1.group(1));
+                    System.out.println("all match group:" + m1.group()); // group zero denotes the entire pattern
+                }
+            }
+            System.out.println();
+            {
+                Matcher m1 = Pattern.compile(pattern2).matcher(str);
+                if(m1.find()) {
+                    System.out.println("group count:" + m1.groupCount());
+                    System.out.println("group 1:" + m1.group(1));
+                    System.out.println("all match group:" + m1.group()); // roup zero denotes the entire pattern
+                }
+            }
+            /**
+             * group count:1
+             * group 1:BBOX
+             * all match group:你会BBOX
+             *
+             * group count:1
+             * group 1:BBOXMAN
+             * all match group:你会BBOXMAN
+             */
+
+            {
+                Pattern isRepeatPattern = Pattern.compile("循环|重复|持续");
+                String query ="循环播放";
+                query ="我想持续播放";
+                if(isRepeatPattern.matcher(query).find()){
+                    System.out.println("循环 true");
+                }
+
+
+            }
+        }
     }
 }
