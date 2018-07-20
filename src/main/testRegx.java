@@ -289,5 +289,73 @@ public class testRegx {
 
             }
         }
+
+        {
+            System.out.println("====================--");
+            String str = "老虎怎么叫"; // 1
+            String pattern;
+            // String pattern;
+            pattern = "(叫|笑|哭)"; //
+            Matcher matcher = Pattern.compile(pattern).matcher(str);
+            if (matcher.find()) {
+                System.out.println("group count:" + matcher.groupCount());
+                String noPreSufStr = matcher.group(1);
+                System.out.println("group:" + noPreSufStr);
+            }
+        }
+
+        {
+            System.out.println("====================--");
+            String str = "小宝贝怎么哭"; // 1
+            System.out.println("query："+str);
+            String pattern;
+            // String pattern;
+            pattern = "(?:小爱|小爱同学|小爱朋友)?(.+?)(怎么|如何|怎样)(叫|大叫|哭|哭|大哭|笑|大笑)(吧|呗|啵|啦|了|咯|啰|吗|嘛|么|呢|啊|好不好|呀)?"; //
+            Matcher matcher = Pattern.compile(pattern).matcher(str);
+            if (matcher.find()) {
+                System.out.println("group count:" + matcher.groupCount());
+                String noPreSufStr = matcher.group(1);
+                System.out.println("group:" + noPreSufStr);
+            }
+        }
+
+        {
+            // blog: https://www.jb51.net/article/79715.htm
+            /**
+             * 很多正则引擎都支持命名分组，java是在java7中才引入这个特性，语法与.Net类似（.Net允许同一表达式出现名字相同的分组，java不允许）。
+             * 命名分组很好理解，就是给分组进行命名。下面简单演示一下java中如何使用以及注意事项。
+             * 1.正则中定义名为NAME的分组
+             * (?<NAME>X)
+             * 这里X为我们要匹配的内容，注意，在这个命名不能重复，名字也不能以数字开头！
+             * 2.反向引用NAME组所匹配到的内容
+             * \k<NAME>
+             * 注意，反向引用是针对组所匹配到的内容，而非组的表达式。
+             * 3.替换中，引用组NAME中捕获到的字符串
+             * ${NAME}
+             * 4.获取NAME组捕获的字符串
+             * group(String NAME)
+             * 注意：也可以使用序号对命名捕获进行引用，序号从1开始，0为正则的完整匹配结果。
+             */
+            String s = "2015-10-26";
+            Pattern p = Pattern.compile("(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})");
+            Matcher m = p.matcher(s);
+            if (m.find()) {
+                System.out.println("year: " + m.group("year")); //年
+                System.out.println("month: " + m.group("month")); //月
+                System.out.println("day: " + m.group("day")); //日
+
+                System.out.println("year: " + m.group(1)); //第一组
+                System.out.println("month: " + m.group(2)); //第二组
+                System.out.println("day: " + m.group(3)); //第三组
+                System.out.println("all group: " + m.group(0)); // 正则的完整匹配结果
+            }
+
+            System.out.println(s.replaceAll("(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})", "${day}-${month}-${year}")); //将 年-月-日 形式的日期改为 日-月-年 形式
+        }
+
+        {
+
+
+        }
     }
 }
