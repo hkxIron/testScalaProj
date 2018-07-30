@@ -1,3 +1,5 @@
+import org.apache.commons.collections.bag.SynchronizedSortedBag;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -5,7 +7,43 @@ public class testRegx {
     enum ObjType{ english, math, computer };
 
     public static void main(String[] args){
+        {
+            System.out.println("====================");
+            String []strs = {"循环播放小鸟的声音","我听听大象的声音","你好", "你不要","你好啊" };
+            String pattern = "^(?:我[想要]?听听?|有没有|学习?个?|(?:循环)?播?放?)(.+?)的?(?:声音|叫声?)$";
+            Pattern compilePattern = Pattern.compile(pattern);
+            for(String str:strs) {
+                Matcher preSufPattern = compilePattern.matcher(str);
+                if (preSufPattern.find()) {
+                    System.out.println("group count:" + preSufPattern.groupCount());
+                    String noPreSufStr = preSufPattern.group(1);
+                    System.out.println("group:" + noPreSufStr);
+                }
+                else {
+                    System.out.println("no match query:" + str);
+                }
+            }
+            System.exit(-1);
+        }
 
+        {
+            System.out.println("====================");
+            String []strs = {"你给我","放鞭炮","你好", "你不要","你好啊" };
+            String pattern = "(^*鞭炮$|^你给我$|^你好么?$)";
+            Pattern compilePattern = Pattern.compile(pattern);
+            for(String str:strs) {
+                Matcher preSufPattern = compilePattern.matcher(str);
+                if (preSufPattern.find()) {
+                    System.out.println("group count:" + preSufPattern.groupCount());
+                    String noPreSufStr = preSufPattern.group(1);
+                    System.out.println("group:" + noPreSufStr);
+                }
+                else {
+                    System.out.println("no match query:" + str);
+                }
+            }
+            System.exit(-1);
+        }
         {
             System.out.println("====================");
             String str = "你给我放鞭炮";
