@@ -8,8 +8,48 @@ public class testRegx {
 
     public static void main(String[] args){
         {
+            String s = "2015-10-26";
+            Pattern p = Pattern.compile("(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})");
+            Matcher m = p.matcher(s);
+            if (m.find()) {
+                System.out.println("year: " + m.group("year")); //年
+                System.out.println("month: " + m.group("month")); //月
+                System.out.println("day: " + m.group("day")); //日
+
+                System.out.println("year: " + m.group(1)); //第一组
+                System.out.println("month: " + m.group(2)); //第二组
+                System.out.println("day: " + m.group(3)); //第三组
+            }
+        }
+        {
+            System.out.println("====================");
+            System.out.println("测试贪心与非贪心");
+            // 按指定模式在字符串查找
+            String line = "This order was placed for QT3000! OK?";
+            String greedyPattern = "(?:.*)(30+)(.*)";
+            String nonGreedyPattern = "(?:.*)(30+?)(.*)"; // 非贪婪模式
+            Matcher m1 = Pattern.compile(greedyPattern).matcher(line);
+            System.out.println("测试贪心");
+            if (m1.find()) {
+                System.out.println("Found value: " + m1.group(0) );
+                System.out.println("Found value: " + m1.group(1) ); // 3000
+            } else {
+                System.out.println("NO MATCH");
+            }
+
+            System.out.println("测试非贪心");
+            m1 = Pattern.compile(nonGreedyPattern).matcher(line);
+            if (m1.find()) {
+                System.out.println("Found value: " + m1.group(0) );
+                System.out.println("Found value: " + m1.group(1) ); // 30
+            } else {
+                System.out.println("NO MATCH");
+            }
+        }
+        {
             System.out.println("====================");
             String []strs = {"循环播放小鸟的声音","我听听大象的声音","你好", "你不要","你好啊" };
+            // (.+?)表示非贪婪匹配,匹配结果: 大象, (.+)?会贪婪匹配：大象的
             String pattern = "^(?:我[想要]?听听?|有没有|学习?个?|(?:循环)?播?放?)(.+?)的?(?:声音|叫声?)$";
             Pattern compilePattern = Pattern.compile(pattern);
             for(String str:strs) {
@@ -23,7 +63,7 @@ public class testRegx {
                     System.out.println("no match query:" + str);
                 }
             }
-            System.exit(-1);
+            //System.exit(-1);
         }
 
         {
@@ -42,7 +82,7 @@ public class testRegx {
                     System.out.println("no match query:" + str);
                 }
             }
-            System.exit(-1);
+            //System.exit(-1);
         }
         {
             System.out.println("====================");
@@ -125,31 +165,7 @@ public class testRegx {
             }
         }
 
-        {
-            System.out.println("====================");
-            System.out.println("测试贪心与非贪心");
-            // 按指定模式在字符串查找
-            String line = "This order was placed for QT3000! OK?";
-            String greedyPattern = "(?:.*)(30+)(.*)";
-            String nonGreedyPattern = "(?:.*)(30+?)(.*)"; // 非贪婪模式
-            Matcher m1 = Pattern.compile(greedyPattern).matcher(line);
-            System.out.println("测试贪心");
-            if (m1.find()) {
-                System.out.println("Found value: " + m1.group(0) );
-                System.out.println("Found value: " + m1.group(1) ); // 3000
-            } else {
-                System.out.println("NO MATCH");
-            }
 
-            System.out.println("测试非贪心");
-            m1 = Pattern.compile(nonGreedyPattern).matcher(line);
-            if (m1.find()) {
-                System.out.println("Found value: " + m1.group(0) );
-                System.out.println("Found value: " + m1.group(1) ); // 30
-            } else {
-                System.out.println("NO MATCH");
-            }
-        }
 
         {
             System.out.println("output type: " + ObjType.computer.toString() );
@@ -389,11 +405,6 @@ public class testRegx {
             }
 
             System.out.println(s.replaceAll("(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})", "${day}-${month}-${year}")); //将 年-月-日 形式的日期改为 日-月-年 形式
-        }
-
-        {
-
-
         }
     }
 }

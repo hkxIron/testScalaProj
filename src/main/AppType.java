@@ -11,18 +11,18 @@ public enum AppType {
     // 其它
     OTHER("other");
 
-    private String name;
+    private String value;
 
-    public String getName() {
-        return name;
+    public String getValue() {
+        return value;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    AppType(String name) {
-        this.name = name;
+    AppType(String value) {
+        this.value = value;
     }
 
     public static AppType parseFromString(String str){
