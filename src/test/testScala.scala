@@ -112,5 +112,9 @@ class testScala extends FunSuite{
         if (equalCnt == num) (true, voiceCnt) else (false, voiceCnt)
     }
 
+    test("test") {
+       val tt= new Array[String](0) // 代表中0代表length, length代表array的长度
+    }
+
 
 }
