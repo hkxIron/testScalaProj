@@ -8,6 +8,23 @@ public class testRegx {
 
     public static void main(String[] args){
         {
+            String[] blackListPattern = {"为什么", "你好", "我想"};
+            StringBuffer sb = new StringBuffer();
+            for(String blackPattern: blackListPattern){
+                sb.append(blackPattern+"|");
+            }
+            if(sb.length()>0) {
+                sb.setLength(sb.length() - 1);
+                sb.insert(0, "(");
+                sb.append(")");
+            }
+            Pattern blackPattern = Pattern.compile(sb.toString());
+            String query = "我在看为什么你们";
+            Matcher matcher = blackPattern.matcher(query);
+            System.out.println("find:"+matcher.find());
+        }
+
+        {
             String s = "2015-10-26";
             Pattern p = Pattern.compile("(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})");
             Matcher m = p.matcher(s);

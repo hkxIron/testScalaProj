@@ -13,6 +13,19 @@ import scala.util.matching.Regex
 
 
 class testScala extends FunSuite{
+    test("测试scala group"){
+       val tt = Seq(1->"a",2->"a", 3->"b", 4->"b")
+        println("before:", tt)
+        val after = tt.map(x=>x._2 -> x._1)
+          .groupBy(_._1)
+          .map{case x=>
+            x._1 -> x._2.map(_._2)
+          }
+      println("after:", after)
+
+
+    }
+
     test("测试正则表达式") {
         val patternSeq = Seq(
             "^(.+)(怎么|如何|咋)叫$",

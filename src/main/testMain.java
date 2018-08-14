@@ -33,7 +33,11 @@ public class testMain {
             System.out.println(ActionType.takeout_book_restaurant.name()); // takeout_book_restaurant
             System.out.println(ActionType.takeout_book_restaurant.toString()); // takeout_book_restaurant
             System.out.println(ActionType.takeout_book_restaurant.getValue()); // takeout_food_book_by_restaurant_name
-            System.out.println("type1:"+ ActionType.valueOf("takeout_book_restaurant")); // takeout_book_restaurant
+            ActionType actionType = ActionType.valueOf("takeout_book_restaurant");
+            System.out.println("type:"+ actionType); // takeout_book_restaurant
+            System.out.println("type name:"+ actionType.name()); // takeout_book_restaurant
+            System.out.println("type value:"+ actionType.value); // takeout_food_book_by_restaurant_name
+            System.out.println("type get value:"+ actionType.getValue()); // takeout_food_book_by_restaurant_name
             try {
                 System.out.println("type2:" + ActionType.valueOf("takeout_food_book_by_restaurant_name")); // throw error
             }catch (Exception e){
