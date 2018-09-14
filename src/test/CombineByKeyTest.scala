@@ -16,16 +16,12 @@ import scala.collection.mutable
 class CombineByKeyTest extends FunSuite {
 
     test("testCombine") {
-
         Logger.getLogger("org.apache").setLevel(Level.ERROR)
         Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
 
         val sc = new SparkContext(new SparkConf().setAppName("CombineByKey Examples").setMaster("local[1]"))
-
         val keysWithValuesList = Array("foo=A", "foo=A", "foo=A", "foo=A", "foo=B", "bar=C", "bar=D", "bar=D")
-
         val initialScores = Array(("Fred", 88.0), ("Fred", 95.0), ("Fred", 91.0), ("Wilma", 93.0), ("Wilma", 95.0), ("Wilma", 98.0))
-
         val data:RDD[String] = sc.parallelize(keysWithValuesList)
         val wilmaAndFredScores:RDD[(String, Double)] = sc.parallelize(initialScores).cache()
 

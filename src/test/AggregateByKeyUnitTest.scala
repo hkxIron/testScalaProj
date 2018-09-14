@@ -27,18 +27,20 @@ class AggregateByKeyTest extends FunSuite{
         //Create key value pairs
         val kv = data.map(_.split("=")).map(v => (v(0), v(1))).cache()
 
+        /**
+          * groupByKey是比较耗时的操作，groupByKey函数会将所有的相同的key放到一个reducer中去，若某个key上的元素较多，将非常耗时。
+          *
+          * 而aggregateByKey将会将同一个partition上的元素进行提前聚合
+          * aggregateByKey有3个参数：
+          * 1.初始空集合
+          * 2.集合中添加元素的函数
+          * 3.两个集合进行合并的聚合函数
+          *
+          */
         val initialSet = mutable.HashSet.empty[String]
         val addToSet = (s: mutable.HashSet[String], v: String) => s += v
         val mergePartitionSets = (p1: mutable.HashSet[String], p2: mutable.HashSet[String]) => p1 ++= p2
-
         val uniqueByKey = kv.aggregateByKey(initialSet)(addToSet, mergePartitionSets)
-
-        val initialCount = 0
-        val addToCounts = (n: Int, v: String) => n + 1
-        val sumPartitionCounts = (p1: Int, p2: Int) => p1 + p2
-
-        val countByKey = kv.aggregateByKey(initialCount)(addToCounts, sumPartitionCounts)
-
 
         val writer = new PrintWriter(new File("test_aggreate.txt"))
         writer.println("Aggregate By Key unique Results")
@@ -49,7 +51,10 @@ class AggregateByKeyTest extends FunSuite{
         }
 
         writer.println("------------------")
-
+        val initialCount = 0
+        val addToCounts = (n: Int, v: String) => n + 1
+        val sumPartitionCounts = (p1: Int, p2: Int) => p1 + p2
+        val countByKey = kv.aggregateByKey(initialCount)(addToCounts, sumPartitionCounts)
         writer.println("Aggregate By Key sum Results")
         val sumResults = countByKey.collect()
         for(indx <- sumResults.indices){

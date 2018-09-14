@@ -2,11 +2,254 @@ import org.apache.commons.collections.bag.SynchronizedSortedBag;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+// blog:https://segmentfault.com/a/1190000009162306
+// http://www.runoob.com/java/java-regular-expressions.html
 public class testRegx {
     enum ObjType{ english, math, computer };
 
+    /**
+     * \d	匹配一个数字，是 [0-9] 的简写
+     * \D	匹配一个非数字，是 [^0-9] 的简写
+     * \s	匹配一个空格，是 [ \t\n\x0b\r\f] 的简写
+     * \S	匹配一个非空格
+     * \w	匹配一个单词字符（大小写字母、数字、下划线），是 [a-zA-Z_0-9] 的简写
+     * \W	匹配一个非单词字符（除了大小写字母、数字、下划线之外的字符），等同于 [^\w]
+     */
+
     public static void main(String[] args){
+        {
+            // 匹配 1990到2017间的所有年份
+            String str = "1990\n2010\n2001\n2017";
+            // 这里应用了 (?m) 的多行匹配模式，只为方便我们测试输出
+            // "^1990$|^199[1-9]$|^20[0-1][0-6]$|^2017$" 为判断 1990-2017 正确的正则表达式
+            Pattern pattern = Pattern.compile("(?m)^1990$|^199[1-9]$|^20[0-1][0-6]$|^2017$");
+            Matcher matcher = pattern.matcher(str);
+            while (matcher.find()) {
+                System.out.println(matcher.group());
+            }
+        }
+        {
+            // [\u4e00-\u9fa5]+ 代表匹配中文字,匹配中文
+            String str = "test:閑人到人间";
+            Pattern pattern = Pattern.compile("[\\u4e00-\\u9fa5]+");
+            Matcher matcher = pattern.matcher(str);
+            while (matcher.find()) {
+                System.out.println(matcher.group());
+            }
+        }
+        {   System.out.println("wxj".matches("wxj"));
+            System.out.println("----------");
+
+            String[] array = "w x j".split("\\s");
+            for (String item : array) {
+                System.out.println(item);
+            }
+            System.out.println("----------");
+
+            System.out.println("w x j".replaceFirst("\\s", "-"));
+            System.out.println("----------");
+            System.out.println("w x j".replaceAll("\\s", "-"));}
+            System.out.println("===============================");
+        {
+            String str = "<img  src='aaa.jpg' /><img src=bbb.png/><img src=\"ccc.png\"/>" +
+                    "<img src='ddd.exe'/><img src='eee.jpn'/>";
+            // 这里我们考虑了一些不规范的 img 标签写法，比如：空格、引号
+            Pattern pattern = Pattern.compile("<img\\s+src=(?:['\"])?(?<src>\\w+.(jpg|png))(?:['\"])?\\s*/>");
+            Matcher matcher = pattern.matcher(str);
+            while (matcher.find()) {
+                System.out.println(matcher.group("src"));
+            }
+            System.out.println("===============================");
+        }
+
+        {
+            /**
+             * (?=表达式) 零宽度正预测先行断言 表示匹配表达式前面的位置
+             *
+             * 例如，要匹配 cooking ，singing ，doing中除了ing之外的内容，只取cook, sing, do的内容，这时候的增则表达式可以用 [a-z]*(?=ing) 来匹配
+             *
+             * 注意：先行断言的执行步骤是这样的先从要匹配的字符串中的最右端找到第一个 ing (也就是先行断言中的表达式)然后 再匹配其前面的表达式，若无法匹配则继续查找第二个 ing 再匹配第二个 ing 前面的字符串，若能匹配则匹配，符合正则的贪婪性。
+             *
+             * 例如： .*(?=ing) 可以匹配 “cooking singing” 中的 “cooking sing” 而不是 cook
+             */
+            String line = "cooking singing";
+            String pattern = ".*(?=ing)";
+            Matcher matcher = Pattern.compile(pattern).matcher(line);
+            System.out.println("执行正向预测先行搜索的子表达式");
+            if (matcher.find()) {
+                System.out.println("group count:"+matcher.groupCount()); //0,注意，它不占用 groupCount
+                System.out.println("Found value:" + matcher.group(0)); // 匹配 “cooking singing” 中的 “cooking sing” 而不是 cook
+                System.out.println("start:"+ matcher.start()); // inclusive = 11
+                System.out.println("end:"+ matcher.end()); // exclusive = 19
+            } else {
+                System.out.println("NO MATCH");
+            }
+            System.out.println("===============================");
+        }
+
+        {
+            /**
+             * (?<=表达式) 零宽度正回顾后发断言 表示匹配表达式后面的位置
+             *
+             * 例如 (?<=abc).* 可以匹配 abcdefg 中的 defg
+             *
+             * 注意：后发断言跟先行断言恰恰相反 它的执行步骤是这样的：先从要匹配的字符串中的最左端找到第一个abc(也就是先行断言中的表达式)然后 再匹配其后面的表达式，若无法匹配则继续查找第二个 abc 再匹配第二个 abc 后面的字符串，若能匹配则匹配。
+             *
+             * 例如 (?<=abc).* 可以匹配 abcdefgabc 中的 defgabc 而不是 abcdefg
+             */
+            String line = "abcdefgabc";
+            String pattern = "(?<=abc).*";
+            Matcher matcher = Pattern.compile(pattern).matcher(line);
+            if (matcher.find()) {
+                System.out.println("group count:"+matcher.groupCount()); //0,注意，它不占用 groupCount
+                System.out.println("Found value:" + matcher.group(0)); // 匹配 “cooking singing” 中的 “cooking sing” 而不是 cook
+                System.out.println("start:"+ matcher.start()); // inclusive = 11
+                System.out.println("end:"+ matcher.end()); // exclusive = 19
+            } else {
+                System.out.println("NO MATCH");
+            }
+            System.out.println("===============================");
+        }
+
+        {
+            String line = "please use Windows 2000";
+            String pattern = "Windows (?=95|98|NT|2000)";
+            Matcher matcher = Pattern.compile(pattern).matcher(line);
+            System.out.println("执行正向预测先行搜索的子表达式");
+            if (matcher.find()) {
+                System.out.println("group count:"+matcher.groupCount()); //0,注意，它不占用 groupCount
+                System.out.println("Found value:" + matcher.group(0)); // Windows,注意，匹配的并不是 2000
+                System.out.println("start:"+ matcher.start()); // inclusive = 11
+                System.out.println("end:"+ matcher.end()); // exclusive = 19
+            } else {
+                System.out.println("NO MATCH");
+            }
+
+            System.out.println("\n执行反向预测先行搜索的子表达式");
+            line = "please use Windows 3.1";
+            pattern = "Windows (?!95|98|NT|2000)"; // 捕获后面不能是 91,98,NT,2000
+            matcher = Pattern.compile(pattern).matcher(line);
+            if (matcher.find()) {
+                System.out.println("group count:"+matcher.groupCount()); //0,注意，它不占用 groupCount
+                System.out.println("Found value:" + matcher.group(0)); // Windows
+                System.out.println("start:"+ matcher.start()); // inclusive
+                System.out.println("end:"+ matcher.end()); // exclusive
+            }else {
+                System.out.println("NO MATCH");
+            }
+            System.out.println("===================");
+        }
+        {
+            String line = "please use Windows 3.1";
+            String pattern = "Windows (?=95|98|NT|2000)";
+            Matcher matcher = Pattern.compile(pattern).matcher(line);
+            System.out.println("执行正向预测先行搜索的子表达式");
+            if (matcher.find()) {
+                System.out.println("group count:"+matcher.groupCount());
+                System.out.println("Found value:" + matcher.group(0));
+                System.out.println("start:"+ matcher.start()); // inclusive = 11
+                System.out.println("end:"+ matcher.end()); // exclusive = 19
+            } else {
+                System.out.println("NO MATCH");
+            }
+
+            System.out.println("\n执行反向预测先行搜索的子表达式");
+            line = "please use Windows 2000";
+            pattern = "Windows (?!95|98|NT|2000)"; // 捕获后面不能是 91,98,NT,2000
+            matcher = Pattern.compile(pattern).matcher(line);
+            if (matcher.find()) {
+                System.out.println("group count:"+matcher.groupCount());
+                System.out.println("Found value:" + matcher.group(0));
+                System.out.println("start:"+ matcher.start()); // inclusive
+                System.out.println("end:"+ matcher.end()); // exclusive
+            } else {
+                System.out.println("NO MATCH");
+            }
+            System.out.println("===================");
+        }
+        {
+            String str = "@wxj 你好啊";
+            Pattern pattern = Pattern.compile("@(?<first>\\w+\\s)"); // 中文并未匹配到
+            Matcher matcher = pattern.matcher(str);
+            while (matcher.find()) {
+                System.out.println("group count:" + matcher.groupCount()); //
+                System.out.println(matcher.group()); // 0
+                System.out.println(matcher.group(1));
+                System.out.println("start:"+ matcher.start()); // inclusive =0,针对文本str的下标而言
+                System.out.println("end:"+ matcher.end()); // exclusive=5
+                System.out.println(matcher.group("first"));
+                System.out.println("sub:"+ str.substring(matcher.start(), matcher.end()));
+                System.out.println("===================");
+            }
+        }
+        {
+            // 去除单词与 , 和 . 之间的空格
+            String Str = "Hello , World .";
+            //Str = " World .";
+            String pattern = "(\\w)(\\s+)([.,])"; //
+            // $0 匹配 `(\w)(\s+)([.,])` 结果为 `o空格,` 和 `d空格.`
+            // $1 匹配 `(\w)` 结果为 `o` 和 `d`
+            // $2 匹配 `(\s+)` 结果为 `空格` 和 `空格`
+            // $3 匹配 `([.,])` 结果为 `,` 和 `.`
+            Matcher matcher = Pattern.compile(pattern).matcher(Str);
+            //System.out.println("find:" + matcher.find());
+            while (matcher.find()) { // 如果不用while，则只会返回第一个匹配就停止
+                System.out.println("$0:[" + matcher.group(0) + "]"); // o空格,
+                System.out.println("$1:[" + matcher.group(1) + "]"); // o
+                System.out.println("$2:[" + matcher.group(2) + "]"); // 空格
+                System.out.println("$3:[" + matcher.group(3) + "]"); // ,
+                System.out.println("group count:" + matcher.groupCount()); // 3
+            }
+            System.out.println(Str.replaceAll(pattern, "$1$3")); // Hello, World.
+            System.out.println("===================");
+        }
+        {
+            String str = "换#voice_unit#白噪声";
+            str = "换白噪声";
+            //Pattern pattern=Pattern.compile("(#general_xiaoai#)?(#general_pronoun#)?(#general.want|来段|换一?个|给(#general_pronoun#)?)?(#general_repeat#)?(#voice_play_action#)?(小米)?白噪[声音]?$");
+            Pattern pattern=Pattern.compile("(#general_xiaoai#)?(#general_pronoun#)?(想|要|想要|让|使|叫)?(来一?段|换一?个|换$voice.unit|给(#general_pronoun#)?)?(#general_repeat#)?(#voice_play_action#)?(小米)?白噪[声音]?$");
+            Matcher tokenMatcher = pattern.matcher(str);
+            System.out.println(" "+ tokenMatcher);
+            System.out.println("find:"+ tokenMatcher.find());
+            System.out.println("group :"+ tokenMatcher.group(0));
+            System.out.println("start:"+ tokenMatcher.start());
+            System.out.println("end:"+ tokenMatcher.end());
+            System.out.println("===================");
+        }
+        {
+            String matchStr = "大小女儿";
+            Matcher preSufPattern = Pattern.compile("(?:大白|大|小|棕|黑|白|黄|灰|花|公|母|老)?(.+?)(?:儿)?$").matcher(matchStr);
+            if (preSufPattern.find()) {
+               System.out.println("group 1: "+preSufPattern.group(1));
+            }
+            System.out.println("===================");
+        }
+        {
+            System.out.println("====================");
+            String []strs = {"爆竹声声", // match：爆竹
+                    "爆竹", // no match
+                    "爆竹声声声",// match:爆竹 （一直没想明白，这里为何是 “爆竹”）
+                    "爆竹声", // match：爆竹
+                    "爆竹的声", // match:爆竹的
+                    "爆竹的响声", // match:爆竹的响
+            };
+            // (.+?)表示非贪婪匹配,匹配结果: 大象, (.+)?会贪婪匹配：大象的
+            String pattern = "(.+?)声";
+            Pattern compilePattern = Pattern.compile(pattern);
+            for(String str:strs) {
+                Matcher preSufPattern = compilePattern.matcher(str);
+                //System.out.println("query:"+str);
+                if (preSufPattern.find()) {
+                    System.out.println("group count:" + preSufPattern.groupCount());
+                    String noPreSufStr = preSufPattern.group(1);
+                    System.out.println("group:" + noPreSufStr);
+                }
+                else {
+                    System.out.println("no match query:" + str);
+                }
+            }
+            //System.exit(-1);
+        }
         {
             String[] blackListPattern = {"为什么", "你好", "我想"};
             StringBuffer sb = new StringBuffer();
@@ -190,26 +433,6 @@ public class testRegx {
             System.out.println("output type: " + ObjType.computer.equals(ObjType.computer)); // true
         }
 
-        {
-            System.out.println("====================");
-            String line = "Windows 2000";
-            String pattern = "Windows (?=95|98|NT|2000)";
-            Matcher m1 = Pattern.compile(pattern).matcher(line);
-            System.out.println("执行正向预测先行搜索的子表达式");
-            if (m1.find()) {
-                System.out.println("Found value: " + m1.group(0));
-            } else {
-                System.out.println("NO MATCH");
-            }
-
-            System.out.println("执行反向预测先行搜索的子表达式");
-            line = "Windows 3.1";
-            pattern = "Windows (?!95|98|NT|2000)";
-            m1 = Pattern.compile(pattern).matcher(line);
-            if (m1.find()) {
-                System.out.println("Found value: " + m1.group(0));
-            }
-        }
 
         {
             /**
