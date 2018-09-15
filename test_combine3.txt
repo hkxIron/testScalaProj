@@ -1,0 +1,7 @@
+>>>> Elements in each partition
+>>>> Exploring partitions' data...
+final avg score:
+(zhangsan,85.5)
+(lihua,85.0)
+(wangwu,76.5)
+(xiaoming,93.0)

@@ -1,5 +1,4 @@
 import java.io.{File, PrintWriter}
-
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -12,7 +11,7 @@ import org.scalatest.FunSuite
   *
   * Example of using AggregateByKey
   */
-class AggregateByKeyTest extends FunSuite{
+class AggregateByKeyUnitTest extends FunSuite{
 
     test("testAggregate"){
 

@@ -1,3 +1,4 @@
+package com.scu.hkx.test
 import java.io.{File, PrintWriter}
 
 import org.apache.log4j.{Level, Logger}
@@ -21,8 +22,8 @@ class CombineByKeyTest extends FunSuite {
 
         val sc = new SparkContext(new SparkConf().setAppName("CombineByKey Examples").setMaster("local[1]"))
         val keysWithValuesList = Array("foo=A", "foo=A", "foo=A", "foo=A", "foo=B", "bar=C", "bar=D", "bar=D")
-        val initialScores = Array(("Fred", 88.0), ("Fred", 95.0), ("Fred", 91.0), ("Wilma", 93.0), ("Wilma", 95.0), ("Wilma", 98.0))
         val data:RDD[String] = sc.parallelize(keysWithValuesList)
+        val initialScores = Array(("Fred", 88.0), ("Fred", 95.0), ("Fred", 91.0), ("Wilma", 93.0), ("Wilma", 95.0), ("Wilma", 98.0))
         val wilmaAndFredScores:RDD[(String, Double)] = sc.parallelize(initialScores).cache()
 
         //Create key value pairs
