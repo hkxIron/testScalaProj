@@ -7,7 +7,7 @@ import org.scalatest.FunSuite
 
 import scala.collection.mutable
 // blog: http://codingjunkie.net/spark-combine-by-key/
-
+// https://www.edureka.co/blog/apache-spark-combinebykey-explained
 /**
   *
   */
