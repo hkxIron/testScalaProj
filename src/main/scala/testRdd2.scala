@@ -3,6 +3,7 @@ import org.apache.spark.rdd.RDD
 
 object testRdd2 {
     def main(args: Array[String]) {
+        println(s"class name:${getClass.toString}")
         val conf = new SparkConf().setAppName("SingleRDD").setMaster("local[1]")
         val sc = new SparkContext(conf)
         // 设置日志等级
