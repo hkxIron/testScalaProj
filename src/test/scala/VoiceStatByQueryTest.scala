@@ -1,3 +1,4 @@
+package com.scu.hkx.test
 import java.io.{File, PrintWriter}
 
 import org.apache.log4j.{Level, Logger}

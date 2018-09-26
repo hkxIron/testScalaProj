@@ -1,0 +1,4 @@
+CombinByKey unique Results
+name:hkx idSet:3,4 totalScore:188.0 count:2 avgScore:94.0
+name:Fred idSet:0,1,2 totalScore:274.0 count:3 avgScore:91.33333333333333
+name:Wilma idSet:5,6,7 totalScore:286.0 count:3 avgScore:95.33333333333333
