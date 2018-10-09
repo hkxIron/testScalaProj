@@ -18,6 +18,20 @@ public class testRegx {
 
     public static void main(String[] args){
         {
+            String NUM = "$NUM$";
+            String str="我们在1973年时";
+            str = str.toLowerCase();
+            Pattern p = Pattern.compile("\\d+");
+            Matcher matcher = p.matcher(str);
+            while (matcher.find()) {
+               //str = matcher.replaceAll(NUM);
+                System.out.println(matcher.group());
+                System.out.println("replaced:"+str.replace(matcher.group(),NUM));
+            }
+            System.out.println(str);
+            System.exit(-1);
+        }
+        {
             // 匹配 1990到2017间的所有年份
             String str = "1990\n2010\n2001\n2017";
             // 这里应用了 (?m) 的多行匹配模式，只为方便我们测试输出
