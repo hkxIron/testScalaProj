@@ -18,6 +18,17 @@ public class testRegx {
 
     public static void main(String[] args){
         {
+            Pattern voiceActionPattern = Pattern.compile("(叫|笑|哭|放个屁|放屁|屁)");
+            String[] arr={"我让你放个屁", "你放屁吧", "放屁好嘛","来个屁吧"};
+            for(String str:arr){
+                Matcher matcher = voiceActionPattern.matcher(str);
+                if(matcher.find()){
+                    System.out.println("query:"+str+" action:"+matcher.group(1)+ " count:"+matcher.groupCount());
+                }
+            }
+            System.exit(-1);
+        }
+        {
             String NUM = "$NUM$";
             String str="我们在1973年时";
             str = str.toLowerCase();
@@ -29,7 +40,6 @@ public class testRegx {
                 System.out.println("replaced:"+str.replace(matcher.group(),NUM));
             }
             System.out.println(str);
-            System.exit(-1);
         }
         {
             // 匹配 1990到2017间的所有年份

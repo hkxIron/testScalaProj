@@ -1,4 +1,8 @@
 import javax.sound.midi.Soundbank;
+import scala.Option;
+import scala.Option$;
+import scala.collection.JavaConverters;
+import scala.concurrent.JavaConversions;
 
 public class testMain {
     public enum ActionType {
@@ -29,6 +33,16 @@ public class testMain {
     }
 
     public static void main(String[] args){
+        {
+            TestClass t1 = new TestClass(1, scala.Option$.MODULE$.apply("xx"));
+            System.out.println("id:"+t1.id());
+            System.out.println("name:"+t1.name());
+            System.out.println("name.get:"+t1.name().get());
+            TestClass t2 = new TestClass(1, scala.Option$.MODULE$.apply(null)); // 赋值为None
+            System.out.println("name:"+t2.name());
+            System.out.println("name is defined:"+t2.name().isDefined());
+            System.out.println("name is empty:"+t2.name().isEmpty());
+        }
         {
             System.out.println(ActionType.takeout_book_restaurant.name()); // takeout_book_restaurant
             System.out.println(ActionType.takeout_book_restaurant.toString()); // takeout_book_restaurant
