@@ -18,6 +18,21 @@ public class testRegx {
 
     public static void main(String[] args){
         {
+            Pattern storePattern = Pattern.compile("(.+)(?:超市|便利店)");
+            String[] arr={"超市", "家乐福超市", "7天超市", "超市","超市在哪里","来个屁吧"};
+            for(String str:arr){
+                Matcher matcher = storePattern.matcher(str);
+                if(matcher.find()){
+                    /*
+                    query:家乐福超市 store:家乐福 count:1
+                    query:7天超市 store:7天 count:1
+                    */
+                    System.out.println("query:"+str+" store:"+matcher.group(1)+ " count:"+matcher.groupCount());
+                }
+            }
+            System.exit(-1);
+        }
+        {
             Pattern voiceActionPattern = Pattern.compile("(叫|笑|哭|放个屁|放屁|屁)");
             String[] arr={"我让你放个屁", "你放屁吧", "放屁好嘛","来个屁吧"};
             for(String str:arr){
