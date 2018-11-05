@@ -1,8 +1,14 @@
 import javax.sound.midi.Soundbank;
+
+import org.apache.commons.lang3.StringUtils;
 import scala.Option;
 import scala.Option$;
 import scala.collection.JavaConverters;
 import scala.concurrent.JavaConversions;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class testMain {
     public enum ActionType {
@@ -31,8 +37,41 @@ public class testMain {
             this.value = name;
         }
     }
+    public static String generalNormalize(String str) {
+        if (str == null || str.length() == 0) return str;
+        return str
+                .replaceAll(" ", "")
+                .replaceAll("\\pP", "") // 会去除所有的标点符号,无论是中文还是英文,但空格不会被去除
+                ;
+    }
 
     public static void main(String[] args){
+        {
+            System.out.println(StringUtils.isEmpty("    ")); // false
+            System.out.println(StringUtils.isBlank("    ")); // true, 如果只有空白字符，则会为true
+            System.out.println(StringUtils.isEmpty(" a   ")); // false
+            System.out.println(StringUtils.isBlank(" a   ")); // false
+        }
+        {
+            Map<String,String> m1=new HashMap<String,String>();
+            m1.put("k1",null);
+            String v1 = m1.getOrDefault("k1","default");
+            System.out.println("v1:"+v1);
+            System.out.println("v1:"+ Optional.ofNullable(m1.get("k1")).orElse("default"));
+            System.out.println("v2:"+ m1.get("k2"));
+            System.out.println("v2:"+ Optional.ofNullable(m1.get("k2")).orElse("default"));
+        }
+        {
+            String str="alarm_小狗的声音";
+            String s1 = generalNormalize(str);
+            System.out.println("s1:"+s1);
+            System.out.println("s1:"+generalNormalize("我们,来个")); // 我们来个
+            System.out.println("s1:"+generalNormalize("我们，来个")); // 我们来个
+            System.out.println("s1:"+generalNormalize("我们。来个")); // 我们来个
+            System.out.println("s1:"+generalNormalize("我们 来个")); // 我们来个
+            System.out.println("用美团预定明天十二点回龙观潇湘码头五个人的座位".length()); // 23
+        }
+
         {
             TestClass t1 = new TestClass(1, scala.Option$.MODULE$.apply("xx"));
             System.out.println("id:"+t1.id());

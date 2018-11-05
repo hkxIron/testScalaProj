@@ -18,6 +18,56 @@ public class testRegx {
 
     public static void main(String[] args){
         {
+            String pstr="(#LeisureFood_neng#)?(#LeisureFood_prefix#)?((#LeisureFood_guang#)|(#LeisureFood_has#))(?!多少)((#LeisureFood_mall#)|((?<namedgroupstore>.+?)(#LeisureFood_mall#)?))(#LeisureFood_has#)?(#LeisureFood_good#)?的?((#LeisureFood_item_type#)|(#LeisureFood_item#))(#general_mood#)?$";
+            Pattern storePattern = Pattern.compile(pstr);
+            String[] arr={"#LeisureFood_has#家乐福的#LeisureFood_item_type##general_mood#"};
+            for(String str:arr){
+                Matcher matcher = storePattern.matcher(str);
+                if(matcher.find()){
+                    /*
+                    query:家乐福超市 store:家乐福 count:1
+                    query:7天超市 store:7天 count:1
+                    */
+                    //System.out.println("query:"+str+" store:"+matcher.group(1)+ " count:"+matcher.groupCount());
+                    System.out.println("query:"+str+" store:"+matcher.group("namedgroupstore")+ " count:"+matcher.groupCount());
+                }
+            }
+            System.exit(-1);
+        }
+        {
+            String pstr="(#LeisureFood_neng#)?(#LeisureFood_prefix#)?((#LeisureFood_guang#)|在|(#LeisureFood_has#))?(?<namedgroupstore>.*?)(#LeisureFood_mall#)?((#LeisureFood_has#)|(#LeisureFood_buy#))(#LeisureFood_good#)?的?(#LeisureFood_item_type#)(#general_mood#)?";
+            Pattern storePattern = Pattern.compile(pstr);
+            String[] arr={"#LeisureFood_mall##LeisureFood_buy##LeisureFood_item_type#"};
+            for(String str:arr){
+                Matcher matcher = storePattern.matcher(str);
+                if(matcher.find()){
+                    /*
+                    query:家乐福超市 store:家乐福 count:1
+                    query:7天超市 store:7天 count:1
+                    */
+                    //System.out.println("query:"+str+" store:"+matcher.group(1)+ " count:"+matcher.groupCount());
+                    System.out.println("query:"+str+" store:"+matcher.group("namedgroupstore")+ " count:"+matcher.groupCount());
+                }
+            }
+            System.exit(-1);
+        }
+        {
+            String pstr="(你帮我|我想要|你给我|我让你|帮我|给我|我想|我要|替我|为我|帮忙|通过|使用|给|帮|叫|请)?(使用|用)?(小美app|美团app|美团应用|小美|美团)?(你帮我|我想要|你给我|我让你|帮我|给我|我想|我要|替我|为我|帮忙|通过|使用|给|帮|叫|请)?在((#sys_date_time#)|(#sys_date#))?(预定一下|预订一下|预约一下|来一个|买一份|买一个|叫一个|点一个|预订下|预定个|预约下|预定下|预约个|点份|来份|来个|买份|买个|叫个|点个|订餐|约个|定个|订个|预约|预定|预订|点|叫|定|订)(一桌)?(#sys_number#)?(个人|人|个)的?(座位|餐位|餐座|位子|订座)";
+            Pattern storePattern = Pattern.compile(pstr);
+            String[] arr={"帮我用美团在7月7日订一桌八人餐位"};
+            for(String str:arr){
+                Matcher matcher = storePattern.matcher(str);
+                if(matcher.find()){
+                    /*
+                    query:家乐福超市 store:家乐福 count:1
+                    query:7天超市 store:7天 count:1
+                    */
+                    System.out.println("query:"+str+" store:"+matcher.group(1)+ " count:"+matcher.groupCount());
+                }
+            }
+            System.exit(-1);
+        }
+        {
             Pattern storePattern = Pattern.compile("(.+)(?:超市|便利店)");
             String[] arr={"超市", "家乐福超市", "7天超市", "超市","超市在哪里","来个屁吧"};
             for(String str:arr){
