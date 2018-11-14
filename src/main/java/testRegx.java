@@ -18,6 +18,20 @@ public class testRegx {
 
     public static void main(String[] args){
         {
+            Pattern pstr = Pattern.compile("(怎么叫|叫声|叫$|的声音)");
+            String[] arr={"小狗怎么叫", "小狗怎么叫啊", "小狗的叫声", "小狗的叫声是什么啊", "小狗的声音","小狗的声音是什么啊", "小狗叫", "叫一个","叫我爸爸"};
+            for(String str:arr){
+                Matcher matcher = pstr.matcher(str);
+                if(matcher.find()){
+                    System.out.println("query:"+str+" store:"+matcher.group(1)+ " count:"+matcher.groupCount());
+                }else{
+                    System.out.println("query:"+str + " not matched!!!!!!");
+                }
+            }
+
+            System.exit(-1);
+        }
+        {
             String pstr="(#LeisureFood_neng#)?(#LeisureFood_prefix#)?((#LeisureFood_guang#)|(#LeisureFood_has#))(?!多少)((#LeisureFood_mall#)|((?<namedgroupstore>.+?)(#LeisureFood_mall#)?))(#LeisureFood_has#)?(#LeisureFood_good#)?的?((#LeisureFood_item_type#)|(#LeisureFood_item#))(#general_mood#)?$";
             Pattern storePattern = Pattern.compile(pstr);
             String[] arr={"#LeisureFood_has#家乐福的#LeisureFood_item_type##general_mood#"};

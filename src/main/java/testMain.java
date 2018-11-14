@@ -9,6 +9,8 @@ import scala.concurrent.JavaConversions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class testMain {
     public enum ActionType {
@@ -46,6 +48,51 @@ public class testMain {
     }
 
     public static void main(String[] args){
+        {
+            Pattern twoPattern =  Pattern.compile("俩(?:.*)(?=个人|餐位|餐桌|座位|位子)");
+            Pattern numPattern =  Pattern.compile("(?<num>[零一二两三四五六七八九十0-9]{1,2})(?:.*)(?=|个人|餐位|餐桌|座位|位子)");
+            String query = "我想订俩个人仨个人的座位";
+            query = "我们三个人想吃饭帮我们预订个位子吧";
+            String s1 = twoPattern.matcher(query).replaceFirst("两");
+            String normQuery = query
+                    .replaceFirst("俩(?=个人|餐位|餐桌|座位|位子)","两")
+                    .replaceFirst("仨(?=个人|餐位|餐桌|座位|位子)","三");
+            System.out.println("out:"+normQuery);
+            System.out.println("s1:"+s1);
+            Matcher matcher = numPattern.matcher(query);
+            System.out.println("s2:"+matcher.replaceFirst("XXX"));
+            System.out.println("==================");
+            query = "我们三个人想吃饭帮我们预订个位子吧";
+            query = "我们三个人想吃饭帮我们";
+            String arr[]={ "我们三个人想吃饭帮我们预订个位子吧",
+                    "在美团上帮我预定下午五点在五彩城院落的三餐位",
+                    "帮我们四个人预约一下7月7号五彩城将太无二的座位",
+                    "给我预约一个我们六个人能坐下的餐位",
+                    "给我用美团预定晚上八点晓寿司五彩城店的位子我们六个人",
+                    "用美团帮我们六个人预定一下五彩城小吊梨汤的位子吧",
+                    "找个饭店预订一下餐位我们五个人",
+                    "给我用美团订五彩城院落的四人桌座位",
+                    "用美团帮我们四个人找个饭店订个位子",
+                    "用美团给我们四个订一下7月6号的餐位"
+            };
+            Pattern numPattern2 = Pattern.compile(".*(?<num>[零一二两三四五六七八九十0-9]{1,2})(个人|人|个).*(?=餐位|餐桌|座位|位子).*");
+            Pattern numPattern3 = Pattern.compile(".*(?=餐位|餐桌|座位|位子).*(?<num>[零一二两三四五六七八九十0-9]{1,2})(个人|人|个).*");
+            Pattern numPattern4 = Pattern.compile(".*(?<num>[零一二两三四五六七八九十0-9]{1,2})(?=餐位|餐桌|座位|位子).*");
+            for(String str:arr) {
+                Matcher matcher2 = numPattern2.matcher(str);
+                Matcher matcher3 = numPattern3.matcher(str);
+                Matcher matcher4 = numPattern4.matcher(str);
+                if (matcher2.find()) {
+                    System.out.println("query:" + str + " cnt:" + matcher2.group("num"));
+                }else if(matcher3.find()){ System.out.println("query:" + str + " cnt:" + matcher3.group("num"));
+                }else if(matcher4.find()){ System.out.println("query:" + str + " cnt:" + matcher4.group("num"));
+                }else{
+                    System.out.println("not found:"+str);
+                }
+            }
+
+            System.exit(-1);
+        }
         {
             System.out.println(StringUtils.isEmpty("    ")); // false
             System.out.println(StringUtils.isBlank("    ")); // true, 如果只有空白字符，则会为true
