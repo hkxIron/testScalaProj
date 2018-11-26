@@ -47,10 +47,40 @@ public class testMain {
                 ;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
+        {
+            Pattern emptyPattern = Pattern.compile("( |\\pP|^(小艾同学|小爱同学|小米机器人|小爱|嗯|呃|哎呀))");
+            String[] arr = { "小爱狗怎么叫", "小爱同学怎么叫", "小爱同学, 怎么叫", "小爱  狗怎么叫", "小艾狗叫", "小爱嗯鸡怎么叫"};
+            for(String query:arr){
+                System.out.println(emptyPattern.matcher(query).replaceAll(""));
+            }
+        }
+        {
+            String str="零一二两三四五六七八九十0123456";
+            Map<String, String> map = new HashMap<String, String>() {
+                {
+                    put("零", "0");
+                    put("一", "1");
+                    put("二", "2");
+                    put("三", "3");
+                    put("四", "4");
+                    put("五", "5");
+                    put("六", "6");
+                    put("七", "7");
+                    put("八", "8");
+                    put("九", "9");
+                    put("十", "10");
+                }
+            };
+
+            StringBuilder sb = new StringBuilder();
+            for(char ch:str.toCharArray()){
+                System.out.println("ch:"+ch+" int:"+(int)ch);
+            }
+        }
         {
             Pattern twoPattern =  Pattern.compile("俩(?:.*)(?=个人|餐位|餐桌|座位|位子)");
-            Pattern numPattern =  Pattern.compile("(?<num>[零一二两三四五六七八九十0-9]{1,2})(?:.*)(?=|个人|餐位|餐桌|座位|位子)");
+            Pattern numPattern =  Pattern.compile("(?<num>[零一二三四五六七八九十0-9]{1,2})(?:.*)(?=|个人|餐位|餐桌|座位|位子)");
             String query = "我想订俩个人仨个人的座位";
             query = "我们三个人想吃饭帮我们预订个位子吧";
             String s1 = twoPattern.matcher(query).replaceFirst("两");

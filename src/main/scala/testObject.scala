@@ -41,6 +41,15 @@ object testObject {
 
     def main(args: Array[String]) {
         {
+            val s1:Option[Seq[String]] = Some(Seq("s1","s2"))
+            println(s1.get.contains("s1"))
+            val tt= s1.map(x=>x.contains("s1")).reduceLeft( _ || _)
+            println("t1:"+tt)
+            val s2:Option[Seq[String]] = None
+            println("t2:"+s2.map(x=>x.contains("s1")))
+            //println(s1.exists(true))
+        }
+        {
             var strs = Seq(
                 "你个逼你个傻逼你个傻逼傻逼你个傻逼你个傻逼你个",
                 "啷个哩个啷啷哩个啷啷个哩个啷个哩个浪里格浪",
