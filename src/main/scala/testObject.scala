@@ -41,6 +41,37 @@ object testObject {
 
     def main(args: Array[String]) {
         {
+            val flag = 0
+            val myMap = if(flag>2){
+               Map("x"->1)
+            }else{
+                Map.empty // 正确写法,返回scala.collection.immutable.Map[A, B]
+            }
+
+            println("myMap1:"+ myMap)
+        }
+        {
+            val flag = 0
+            val myMap = if(flag>2){
+                Map("x"->1)
+            }else{
+                /**
+                  * val m = Map.empty
+                  * m(),找不到对应的方法
+                  */
+                Map.empty() // 错误写法，会抛异常
+                // 实际上调用了 apply(key : A)，scala临时传了一个 BoxedUnit.UNIT进去
+            }
+            println("myMap2:"+ myMap)
+            sys.exit(-1)
+        }
+
+        {
+            val test = testObj(Some("xx"), 12)
+            println(test.productIterator.mkString(" "))
+            sys.exit(-1)
+        }
+        {
             val s1:Option[Seq[String]] = Some(Seq("s1","s2"))
             println(s1.get.contains("s1"))
             val tt= s1.map(x=>x.contains("s1")).reduceLeft( _ || _)
