@@ -6,9 +6,7 @@ import scala.Option$;
 import scala.collection.JavaConverters;
 import scala.concurrent.JavaConversions;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,8 +44,96 @@ public class testMain {
                 .replaceAll("\\pP", "") // 会去除所有的标点符号,无论是中文还是英文,但空格不会被去除
                 ;
     }
+    public enum Device {
+        /**
+         * 手机
+         */
+        PHONE("MIAI"),
+        /**
+         * 平板
+         */
+        PAD("pad_miui_voiceassist"),
+        /**
+         * 车和家
+         */
+        M01("M01");
+
+        private String appName; // MIAI
+        public String appNameOrigin;
+
+        Device(String appName) {
+            this.appName = appName;
+        }
+
+        public static Device fromAppName(String appName) {
+            for (Device device : Device.values()) {
+                if (device.appName.equals(appName)) {
+                    device.appNameOrigin=appName;
+                    return device;
+                }
+            }
+            Device.PHONE.appNameOrigin=appName;
+            return Device.PHONE;
+        }
+
+        public String getAppName() {
+            return appName;
+        }
+    }
 
     public static void main(String[] args) {
+        {
+            int x1= 100_000_000;
+            System.out.println("x1:"+x1);
+            Device device1 = Device.fromAppName("MIAI");
+            Device device2 = Device.fromAppName("pad");
+            Device device3 = Device.fromAppName("M01");
+            Device device4 = Device.fromAppName("xx");
+            System.out.println("device4 origin:"+ device4.appNameOrigin +" device:"+device4);// PHONE
+            assert device4.appNameOrigin.equals("xx");
+            assert device4 == Device.PHONE;
+            System.exit(-1);
+        }
+        {
+            int x1= 100_000_000;
+            System.out.println("x1:"+x1);
+            System.out.println(Device.fromAppName("MIAI").getAppName());
+            System.out.println(Device.fromAppName("pad_miui_voiceassist").getAppName()); //pad_miui_voiceassist
+            System.out.println(Device.fromAppName("pad_miui_voiceassist")); //pad
+            assert(Device.fromAppName("M01").getAppName().equals("M01"));
+            assert Device.fromAppName("M01") == Device.M01 ;
+            System.exit(-1);
+        }
+        {
+            ArrayList<Integer> arr = new ArrayList<Integer>();
+            arr.add(1);
+            arr.add(2);
+            arr.add(3);
+            ArrayList<ArrayList<Integer>> arr2 = new ArrayList<ArrayList<Integer>>();
+            arr2.add(arr);
+            System.out.println("arr2[-1]"+ arr2.get(-1));
+
+        }
+        {
+            System.out.println("out:"+StringUtils.strip(" ab cd ef \t")+"----");
+            Pattern chaoshiPattern=Pattern.compile(".*");
+            String[] arr = { "好又多超市", "全家便利店"};
+            for(String query:arr){
+                Matcher matcher= chaoshiPattern.matcher(query);
+                if(matcher.find()) {
+                    System.out.println(matcher.group(0) + " count:"+matcher.groupCount());
+                }
+            }
+            System.exit(-1);
+        }
+        {
+            Pattern chaoshiPattern=Pattern.compile("(超市|便利店)$");
+            String[] arr = { "好又多超市", "全家便利店"};
+            for(String query:arr){
+                System.out.println(chaoshiPattern.matcher(query).replaceFirst(""));
+            }
+
+        }
         {
             Pattern emptyPattern = Pattern.compile("( |\\pP|^(小艾同学|小爱同学|小米机器人|小爱|嗯|呃|哎呀))");
             String[] arr = { "小爱狗怎么叫", "小爱同学怎么叫", "小爱同学, 怎么叫", "小爱  狗怎么叫", "小艾狗叫", "小爱嗯鸡怎么叫"};

@@ -1,5 +1,4 @@
 import com.google.gson.*;
-import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +10,30 @@ import java.util.List;
  * Date: 18-10-18
  * Time: 下午2:29
  */
+class Student {
+    private int rollNo;
+    private String name;
+
+    public int getRollNo() {
+        return rollNo;
+    }
+
+    public void setRollNo(int rollNo) {
+        this.rollNo = rollNo;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String toString() {
+        return "Student[ name = "+name+", roll no: "+rollNo+ "]";
+    }
+}
 
 public class testGson {
     public String query = "";
@@ -43,12 +66,54 @@ public class testGson {
 
     public static void main(String[] args) {
         {
+
+           Gson gson4 = (new GsonBuilder()).setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+            Student student = new Student();
+            student.setRollNo(1);
+            String jsonString = gson4.toJson(student);
+
+            System.out.println(jsonString);
+            student = gson4.fromJson(jsonString, Student.class);
+            System.out.println(student);
+            System.exit(-1);
+
+        }
+        {
+            GsonBuilder builder = new GsonBuilder();
+            builder.serializeNulls();
+            builder.setPrettyPrinting();
+            Gson gson3 = builder.create();
+
+            Student student = new Student();
+            student.setRollNo(1);
+            String jsonString = gson3.toJson(student);
+
+            System.out.println(jsonString);
+            student = gson3.fromJson(jsonString, Student.class);
+            System.out.println(student);
+            System.exit(-1);
+        }
+        {
+            Gson gson2 = new Gson();
+
+            Student student = new Student();
+            student.setRollNo(1);
+            String jsonString = gson2.toJson(student);
+
+            System.out.println(jsonString);
+            student = gson2.fromJson(jsonString, Student.class);
+            System.out.println(student);
+            System.exit(-1);
+        }
+
+        {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("k1", "v1:tt xx:t1 yy:t2");
             jsonObject.addProperty("k2", "v2");
             System.out.println("has key:" + jsonObject.has("k1"));
             System.out.println("has key:" + jsonObject.has("k3"));
             System.out.println("object:" + jsonObject.toString());
+            System.out.println("value:" + jsonObject.get("k2").getAsString());
             //System.out.println("object:"+jsonObject.getAsString()); //exception
         }
 
