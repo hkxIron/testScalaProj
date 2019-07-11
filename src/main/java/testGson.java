@@ -1,5 +1,6 @@
 import com.google.gson.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +36,96 @@ class Student {
     }
 }
 
+
+class TestBean   {
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public boolean isShow() {
+        return isShow;
+    }
+
+    public void setShow(boolean show) {
+        isShow = show;
+    }
+
+    private String title;
+    private boolean isShow = true;//这里给isShow设置了默认值，坑点
+}
+
+class TestBean2{
+    public TestBean2() {
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public boolean isShow() {
+        return isShow;
+    }
+
+    public void setShow(boolean show) {
+        isShow = show;
+    }
+
+    private String title;
+    private boolean isShow = true;//这里给isShow设置了默认值，坑点
+}
+
+class IntentionTest implements Serializable {
+    public class ShowApp {
+        // !!!该函数用来初始化,以备gson反序列化时调用,请勿删除!!!
+        public ShowApp() {
+            this.isNative=false;
+            this.isOnline=true;
+        }
+
+        public ShowApp(String displayName, String packageName, String iconUrl, boolean isNative, boolean isOnline) {
+            this.isNative = isNative;
+            this.isOnline = isOnline;
+        }
+
+        public boolean isNative() { return isNative; }
+
+        public void setNative(boolean aNative) { isNative = aNative; }
+
+        public boolean isOnline() { return isOnline; }
+
+        public void setOnline(boolean online) { isOnline = online; }
+
+        private boolean isNative = false;
+        private boolean isOnline = true;
+
+    }
+
+
+    public List<ShowApp> getApps() {
+        return apps;
+    }
+
+    public void setApps(List<ShowApp> apps) {
+        this.apps = apps;
+    }
+
+    private List<ShowApp> apps;
+    private String tag;
+
+    public IntentionTest() {
+        tag = "";
+        apps = new ArrayList<>();
+    }
+}
+
 public class testGson {
     public String query = "";
     public double score=0.21;
@@ -65,6 +156,26 @@ public class testGson {
     }
 
     public static void main(String[] args) {
+        {
+            Gson gson = new Gson();
+            TestBean testBean = gson.fromJson("{title:\"标题\"}", TestBean.class);
+            TestBean2 testBean2 = gson.fromJson("{title:\"标题\"}", TestBean2.class);
+            String str="{ \n" +
+                    "\"apps\": [\n" +
+                    "                    {\n" +
+                    "                        \"icon_url\": \"http://t2.a.market\",\n" +
+                    "                        \"package_name\": \"com.i.lens\",\n" +
+                    "                        \"display_name\": \"智能识物\"\n" +
+                    "                    }\n" +
+                    "                ],\n" +
+                    "                \"download_now\": false,\n" +
+                    "                \"tag\": \"defaultApp\"\n" +
+                    "}";
+            System.out.println(testBean.isShow());
+            System.out.println(testBean2.isShow());
+            IntentionTest testIntent = gson.fromJson(str, IntentionTest.class);
+            System.out.println(testIntent.getApps().get(0).isOnline());
+        }
         {
 
            Gson gson4 = (new GsonBuilder()).setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
