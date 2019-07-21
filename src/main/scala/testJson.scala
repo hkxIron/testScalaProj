@@ -1,4 +1,4 @@
-import play.api.libs.json.{JsArray, JsValue, Json}
+import play.api.libs.json.{JsArray, JsString, JsValue, Json}
 
 import scala.collection.JavaConverters._
 /*
@@ -69,6 +69,14 @@ object testJson {
       // tt.get("text")
       println("tt:", tt.get("text").toString)
       println("tt arr:", tt.getAsJsonArray("hints"))
+    }
+
+    {
+      println("test 3")
+      val myMap = Map("s1" -> JsString("s1_value"), "s2" -> JsString("s2_value"))
+      val tt = myMap.+(("s3", JsString("s3_value")))
+      println("myMap:"+myMap.toString())
+      println("tt:"+tt.toString())
     }
 
   }
