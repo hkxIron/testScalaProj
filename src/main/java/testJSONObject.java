@@ -5,6 +5,7 @@
  * Time: 下午2:16
  */
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +20,7 @@ public class testJSONObject {
                 "  \"app_name\": \"视频\",\n" +
                 "  \"apps\": [\n" +
                 "    {\n" +
+                //"      <-- 注释 --> \n" +
                 "      \"display_name\": \"视频\",\n" +
                 "      \"icon_url\": \"\",\n" +
                 "      \"is_native\": true,\n" +
@@ -39,7 +41,7 @@ public class testJSONObject {
             System.out.println("new obj2:"+ jsonObj2);
 
         } catch (Exception e) {
-            System.out.println("edgeParser intention occur exception. ");
+            System.out.println("edgeParser intention occur exception. " + ExceptionUtils.getFullStackTrace(e));
         }
 
         StringBuilder sb = new StringBuilder();
