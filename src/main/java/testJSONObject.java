@@ -18,6 +18,8 @@ public class testJSONObject {
     public static void main(String... args) {
         String jsonStr="{\n" +
                 "  \"app_name\": \"视频\",\n" +
+                "  \"ratio\": 3.2,\n" +
+                "  \"size\": 5,\n" +
                 "  \"apps\": [\n" +
                 "    {\n" +
                 //"      <-- 注释 --> \n" +
@@ -32,6 +34,7 @@ public class testJSONObject {
         // System.out.println("origin str:"+jsonStr);
         try {
             JSONObject jsonObj =  new JSONObject(jsonStr);
+            System.out.println(0.001<=1e-2);
             System.out.println("str:"+jsonObj.getString("app_name"));
             System.out.println("obj:"+jsonObj);
             jsonObj.remove("apps");
@@ -39,6 +42,12 @@ public class testJSONObject {
 
             JSONObject jsonObj2 =  new JSONObject(jsonObj); // !!!!!不能这样复制对象,是个空json
             System.out.println("new obj2:"+ jsonObj2);
+
+            System.out.println(jsonObj.getInt("size"));
+            System.out.println(jsonObj.getDouble("size"));
+
+            System.out.println(jsonObj.getInt("ratio"));
+            System.out.println(jsonObj.getDouble("ratio"));
 
         } catch (Exception e) {
             System.out.println("edgeParser intention occur exception. " + ExceptionUtils.getFullStackTrace(e));
