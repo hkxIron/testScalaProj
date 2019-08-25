@@ -29,7 +29,7 @@ object AggregateByKeyTest {
 
         val uniqueByKey = kv.aggregateByKey(initialSet)(addToSet, mergePartitionSets)
 
-        val initialCount = 0;
+        val initialCount = 0
         val addToCounts = (n: Int, v: String) => n + 1
         val sumPartitionCounts = (p1: Int, p2: Int) => p1 + p2
 

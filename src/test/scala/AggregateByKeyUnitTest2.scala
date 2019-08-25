@@ -3,6 +3,7 @@ import java.io.{File, PrintWriter}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.FunSuite
+import org.apache.spark.sql.SparkSession
 
 import scala.collection.mutable
 // blog: http://codingjunkie.net/spark-agr-by-key/
@@ -14,12 +15,17 @@ import scala.collection.mutable
   */
 class AggregateByKeyUnitTest2 extends FunSuite{
 
+    System.setProperty("hadoop.home.dir", "D:\\hadoop_2.6.0")
+    System.setProperty("HADOOP_HOME", "D:\\hadoop_2.6.0")
+
+
     test("testAggregate2"){
 
         Logger.getLogger("org.apache").setLevel(Level.ERROR)
-        Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
+        val logger = Logger.getLogger("org.eclipse.jetty.server")
+        logger.setLevel(Level.OFF)
+        logger.info("start to run =======================")
         val sc = new SparkContext(new SparkConf().setAppName("Grouping Examples").setMaster("local[1]"))
-
         val keysWithValuesList = Array("foo=1,2", "foo=3,4", "bar=-1,-2", "bar=-3,-4", "bar=-5,-6")
 
         val data = sc.parallelize(keysWithValuesList)
