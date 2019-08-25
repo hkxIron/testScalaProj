@@ -13,10 +13,10 @@ object EnumTest {
   object WeekDay extends Enumeration{
     type WeekDay = Value  //声明枚举对外暴露的变量类型
     val Not = Value
-    val Mon = Value("1")
+    val Mon = Value
     val Tue = Value("2")
-    val Wed = Value("3")
-    val Thu = Value("4")
+    val Wed = Value("2")
+    val Thu = Value("thu")
     val Fri = Value("5")
     val Sat = Value("6")
     val Sun = Value("7")
@@ -29,11 +29,16 @@ object EnumTest {
 
   def main(args: Array[String]): Unit = {
 
+
+    println(WeekDay.withName("Mon").toString) // Mon
     println(WeekDay.Not.toString) // Not
-    println(WeekDay.Mon.toString) // 1
+    println(WeekDay.Mon.toString) // Mon
+    println(WeekDay.Thu.toString) // thu
+    println(WeekDay.Wed.toString) // 2
     println(WeekDay.checkExists("8"))//检测是否存在 , false
 
     println(WeekDay.Sun==WeekDay.withName("7"))//正确的使用方法, true
+
 
     println(WeekDay.Sun=="7")//错误的使用方法 ,false
 
@@ -44,6 +49,9 @@ object EnumTest {
     val days = List(WeekDay.Not,WeekDay.Mon, WeekDay.Tue)
     println("contains Mon:", days.contains(WeekDay.Mon))
     println("contains Sum:", days.contains(WeekDay.Sun))
+
+    val s1 = Set(WeekDay.Mon, WeekDay.Tue, WeekDay.Wed)
+    println(s1, " size:", s1.size)
   }
 
 }

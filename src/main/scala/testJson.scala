@@ -1,4 +1,4 @@
-import play.api.libs.json.{JsArray, JsValue, Json}
+import play.api.libs.json._
 
 import scala.collection.JavaConverters._
 /*
@@ -12,6 +12,8 @@ object testJson {
     val str =
       """ {
  "text": "",
+ "name": "hkx",
+ "sex": "male",
  "hints": [
  {
   "action": "INSTALL",
@@ -69,6 +71,35 @@ object testJson {
       // tt.get("text")
       println("tt:", tt.get("text").toString)
       println("tt arr:", tt.getAsJsonArray("hints"))
+    }
+
+    {
+      println("test 3")
+      val myMap = Map("s1" -> JsString("s1_value"), "s2" -> JsString("s2_value"))
+      val tt = myMap.+(("s3", JsString("s3_value")))
+      println("myMap:"+myMap.toString())
+      println("tt:"+tt.toString())
+    }
+
+    {
+      println("test 4")
+      //val jsonObj = Json.obj(Json(str))
+
+      val jsonObj = Json.obj(
+        "open_mic" -> JsBoolean(false),
+        "unknown_domain_action" -> 0,
+        "to_speak" -> "你好的tospeak",
+        "to_display" -> Json.obj("type" -> 1,
+                                  "text" -> "你好!")
+        )
+      val mapValues = jsonObj.value.mapValues{ x =>
+        x.asOpt[String].getOrElse(x.toString())
+      }
+
+      println("key1:"+(jsonObj \ "key1").asOpt[String].getOrElse("default"))
+
+      println("jsonObj:"+ jsonObj.toString())
+      println("t2:"+ mapValues.toString())
     }
 
   }

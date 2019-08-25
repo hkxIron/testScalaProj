@@ -1,4 +1,6 @@
-    public class TestUTF8 {
+
+
+public class TestUTF8 {
         public static void main(String[] args) throws Exception {
             byte[][] bytes = {
 // 00110001
