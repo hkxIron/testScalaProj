@@ -1,4 +1,4 @@
-import play.api.libs.json.{Json, __}
+import play.api.libs.json.{JsObject, Json, __}
 
 /*
 * Created by IntelliJ IDEA.
@@ -48,6 +48,10 @@ object testPlayJson {
       println("jsonObj:"+t1.toString)
       println("")
       println((t1 \ "type").as[String])
+
+      val t2:JsObject = t1.asInstanceOf[JsObject]
+      println(t2.isInstanceOf[JsObject])
+      println("t2:"+t2)
   }
 }
 

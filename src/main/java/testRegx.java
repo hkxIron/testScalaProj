@@ -1,4 +1,6 @@
-import org.apache.commons.collections.bag.SynchronizedSortedBag;
+import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.server.internal.monitoring.jmx.ResourcesMBeanGroup;
+import org.json.JSONObject;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,6 +9,8 @@ import java.util.regex.Pattern;
 public class testRegx {
     enum ObjType{ english, math, computer };
 
+    private static Pattern arrPathPattern = Pattern.compile("(?<key>[A-Za-z0-9]+)\\[(?<index>\\d+)\\]"); // jsonArray的取值, labels[0]
+    private static Pattern JSON_REPLACE_PATTERN = Pattern.compile("\\$\\{[A-Za-z0-9_.]+}"); // 生成tts时会替换掉模板中由$指示的槽位
     /**
      * \d	匹配一个数字，是 [0-9] 的简写
      * \D	匹配一个非数字，是 [^0-9] 的简写
@@ -16,7 +20,140 @@ public class testRegx {
      * \W	匹配一个非单词字符（除了大小写字母、数字、下划线之外的字符），等同于 [^\w]
      */
 
+    static String getJsonValueByPath(JSONObject jsObj, String[] paths, int startIndex) {
+        try {
+            Object curObj = jsObj;
+            for (int i = startIndex; i < paths.length; i++) {
+                String curPath = paths[i]; // labels[0]
+                Matcher matcher = arrPathPattern.matcher(curPath);
+                if (matcher.find()) { // 是数组
+                    String key = matcher.group("key");
+                    int index = Integer.parseInt(matcher.group("index"));
+                    curObj = ((JSONObject) curObj).getJSONArray(key).get(index);
+                } else {
+                    curObj = ((JSONObject) curObj).get(curPath);
+                }
+            }
+            return curObj.toString();
+        }catch (Exception ex){
+            System.out.println("get value from json error");
+        }
+        return StringUtils.EMPTY;
+    }
+
     public static void main(String[] args){
+        {
+            try {
+                JSONObject jsObj = new JSONObject("{\n" +
+                        "    \"entity\": \"邓紫棋\",\n" +
+                        "    \"labels\": [\n" +
+                        "      {\n" +
+                        "        \"score\": 1.8125,\n" +
+                        "        \"detail\": {\n" +
+                        "          \"song\": [\n" +
+                        "            \"来自天堂的魔鬼\",\n" +
+                        "            \"我的秘密\",\n" +
+                        "            \"喜欢你\",\n" +
+                        "            \"心之焰\",\n" +
+                        "            \"夜空中最亮的星\",\n" +
+                        "            \"天空中最亮的星\",\n" +
+                        "            \"夜空中最闪亮的星\",\n" +
+                        "            \"夜空最亮的星\",\n" +
+                        "            \"桃花诺\",\n" +
+                        "            \"穿越火线\",\n" +
+                        "            \"那1夜\"\n" +
+                        "          ],\n" +
+                        "          \"score\": 1.8125000000000002,\n" +
+                        "          \"domain\": \"music\"\n" +
+                        "        },\n" +
+                        "        \"type\": \"singer\"\n" +
+                        "      }\n" +
+                        "    ]\n" +
+                        "  }");
+                {
+                    Pattern JSON_REPLACE_PATTERN = Pattern.compile("(?<fullName>\\$\\{(?<keyName>[A-Za-z0-9_.\\[\\]]+)\\})"); // 生成tts时会替换掉模板中由$指示的槽位
+                    Matcher mather = JSON_REPLACE_PATTERN.matcher("${labels.name}");
+                    if(mather.find()){
+                        System.out.println(mather.group("keyName"));
+                        System.out.println(mather.group("fullName"));
+                    }
+
+                }
+                {
+                    String[] path = "entity".split("\\.");
+                    String value1 = getJsonValueByPath(jsObj, path, 0);
+                    System.out.println("value:"+value1);
+                }
+                {
+                    String[] path = "labels[0].score".split("\\.");
+                    String value1 = getJsonValueByPath(jsObj, path, 0);
+                    System.out.println("value:"+value1);
+                }
+                {
+                    String[] path = "labels[0].detail.song[0]".split("\\.");
+                    String value1 = getJsonValueByPath(jsObj, path, 0);
+                    System.out.println("value:"+value1);
+                }
+                {
+                    String[] path = "labels[0].detail.song[1]".split("\\.");
+                    String value1 = getJsonValueByPath(jsObj, path, 0);
+                    System.out.println("value:"+value1);
+                }
+
+            }catch (Exception ex){
+                System.out.println("parse error!");
+            }
+            System.out.println("=================================");
+        }
+        {
+            Pattern arrPathPattern = Pattern.compile("(?<key>[A-Za-z0-9]+)\\[(?<index>\\d+)\\]"); // jsonArray的取值, labels[0]
+            Matcher matcher = arrPathPattern.matcher("label[0]");
+            if(matcher.find()) {
+                System.out.println("group0:" + matcher.group("key"));
+                System.out.println("group1:" + matcher.group("index"));
+                System.out.println("groupCount:" + matcher.groupCount());
+            }else{
+                System.out.println("no matched");
+            }
+        }
+        {
+            Pattern arrPathPattern = Pattern.compile("(?<key>[A-Za-z0-9]+)\\[(?<index>\\d+)\\]"); // jsonArray的取值, labels[0]
+            Matcher matcher = arrPathPattern.matcher("label0");
+            if(matcher.find()) {
+                System.out.println("group0:" + matcher.group("key"));
+                System.out.println("group1:" + matcher.group("index"));
+                System.out.println("groupCount:" + matcher.groupCount());
+            }else{
+                System.out.println("no matched");
+            }
+        }
+        {
+            Pattern arrPathPattern = Pattern.compile("(?<key>[A-Za-z0-9]+)\\[(?<index>\\d+)\\]"); // jsonArray的取值, labels[0]
+            Matcher matcher = arrPathPattern.matcher("label");
+            if(matcher.find()) {
+                System.out.println("group0:" + matcher.group("key"));
+                System.out.println("group1:" + matcher.group("index"));
+                System.out.println("groupCount:" + matcher.groupCount());
+            }else{
+                System.out.println("no matched");
+            }
+        }
+        {
+            System.out.println("$ab.bc.de".contains("\\."));
+            System.out.println("$ab.bc.de".contains("."));
+            System.out.println("$ab.bc.de".split("\\.").length);
+        }
+        {
+            Pattern pattern = Pattern.compile("");
+            Pattern pattern2 = Pattern.compile("(|可不可以)");
+            String query = "";
+            boolean result = pattern.matcher(query).matches(); // 原来这样就可以匹配空
+            System.out.println("匹配空的结果:"+result);
+            System.out.println("匹配非空的结果:"+pattern.matcher("你好").matches());
+            System.out.println("匹配非空的结果:"+pattern2.matcher("").matches()); // true
+            System.out.println("匹配非空的结果:"+pattern2.matcher("可不可以").matches()); //  true
+            System.out.println("匹配非空的结果:"+pattern2.matcher("你好").matches()); // false
+        }
         {
             Pattern pstr = Pattern.compile("(怎么叫|叫声|叫$|的声音)");
             String[] arr={"小狗怎么叫", "小狗怎么叫啊", "小狗的叫声", "小狗的叫声是什么啊", "小狗的声音","小狗的声音是什么啊", "小狗叫", "叫一个","叫我爸爸"};
