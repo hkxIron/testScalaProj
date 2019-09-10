@@ -14,7 +14,32 @@ import play.api.libs.json.JsObject;
 import play.api.libs.json.JsValue;
 import play.api.libs.json.Json;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 public class testJSONObject {
+
+    /*
+    public static Map<String, String> toJavaMap(org.json.JSONObject jsonObject) {
+        Map<String, String> map = new HashMap<>();
+        if(jsonObject==null) return map;
+        //for(String key:jsonObject.keys().) {
+        String key = "";
+        Iterator it = jsonObject.keys();
+        while (it.hasNext())
+            key = (String)it.next();
+            Object value = jsonObject.9(key);
+            if(value instanceof String){
+                map.put(key, (String)value);
+            }else{
+                map.put(key, value.toString());
+            }
+        }
+        return map;
+    }
+    */
+
     public static void main(String... args) {
         String jsonStr="{\n" +
                 "  \"app_name\": \"视频\",\n" +
@@ -42,6 +67,9 @@ public class testJSONObject {
 
             JSONObject jsonObj2 =  new JSONObject(jsonObj); // !!!!!不能这样复制对象,是个空json
             System.out.println("new obj2:"+ jsonObj2);
+
+            //Map<String, String> newMap = toJavaMap(jsonObj);
+
 
             System.out.println(jsonObj.getInt("size"));
             System.out.println(jsonObj.getDouble("size"));
