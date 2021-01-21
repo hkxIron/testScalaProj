@@ -7,6 +7,7 @@ import com.google.gson.LongSerializationPolicy;
 
 public class GsonUtils {
     private static final Gson instance = createGson();
+    public static final Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
 
     public static Gson gson() {
         return instance;
