@@ -1,5 +1,17 @@
 package com.dream.csv;
 
+import com.google.common.io.Files;
+import old.GsonUtil;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import util.FileUtil;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -57,5 +69,20 @@ public class CSVLoader extends CSVBaseListener {
            i++;
        }
        rows.add(m);
+   }
+
+   public static void main(String[] args) {
+       String content = FileUtil.getFileContent("test.csv");
+
+       CharStream input = CharStreams.fromString(content);
+       CSVLexer lexer =new CSVLexer(input);
+       CommonTokenStream tokens = new CommonTokenStream(lexer);
+       CSVParser parser = new CSVParser(tokens);
+       ParseTree tree = parser.file();
+
+       ParseTreeWalker walker = new ParseTreeWalker();
+       CSVLoader loader = new CSVLoader();
+       walker.walk(loader, tree);
+       System.out.println(GsonUtil.getUnderScoreGson().toJson(loader.rows));
    }
 }

@@ -1,9 +1,15 @@
 package util;
 
+import com.google.common.io.Files;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 
 /*
  * Created by IntelliJ IDEA.
@@ -12,6 +18,30 @@ import java.io.InputStream;
  * Time: 下午8:59
  */
 public class FileUtil {
+
+    public static String getResFileAbsPath(String relPath) {
+        try {
+            URL res = FileUtil.class.getClassLoader().getResource(relPath);
+            File file = Paths.get(res.toURI()).toFile();
+            return file.getAbsolutePath();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String getFileContent(String filePath) {
+        String fileAbsPath = FileUtil.getResFileAbsPath(filePath);
+        if (StringUtils.isBlank(fileAbsPath)) {
+            return null;
+        } else {
+            System.out.println(" ruleFilePath:" + filePath);
+        }
+        String content = "";
+        try {
+            content = Files.asCharSource(new File(fileAbsPath), StandardCharsets.UTF_8).read();
+        } catch (Exception e) {}
+        return content;
+    }
 
     public static boolean isUTF8(File file) throws IOException {
         InputStream in = new FileInputStream(file);
@@ -127,7 +157,7 @@ public class FileUtil {
             return 100;
         }
         // 把 ascii 的也算成 utf-8 的。
-        System.out.println(" len: "+len+ " utf8+ascii:"+(utf8+ascii));
+        System.out.println(" len: " + len + " utf8+ascii:" + (utf8 + ascii));
         return (int) (100 * ((float) (utf8 + ascii) / (float) len));
     }
 
@@ -136,6 +166,6 @@ public class FileUtil {
         byte[] b = new byte[100];
         int len = in.read(b);
         in.close();
-        return getUTF8Percent(b,len)>=90;
+        return getUTF8Percent(b, len) >= 90;
     }
 }
