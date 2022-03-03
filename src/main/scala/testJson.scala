@@ -1,3 +1,4 @@
+import old.GsonUtil
 import play.api.libs.json._
 
 import scala.collection.JavaConverters._
@@ -56,7 +57,7 @@ object testJson {
         hintArray = hintArray :+ hintObj
       }
       println("\n\n")
-      //val prompt = GsonUtil.getUnderScoreGson.fromJson(intentJS.toString(), classOf[Prompt2])
+      //val prompt = old.GsonUtil.getUnderScoreGson.fromJson(intentJS.toString(), classOf[Prompt2])
       println(s"prompt: ${hintArray.toString()}")
     }
 
@@ -65,7 +66,7 @@ object testJson {
 
       // -------------
       //val promot = Prompt("你发好不好", open_mic = Some(true))
-      //val str = GsonUtil.getUnderScoreGson.toJson(promot)
+      //val str = old.GsonUtil.getUnderScoreGson.toJson(promot)
       println("str:", str)
       val tt = GsonUtil.getJsonParser.parse(str).getAsJsonObject
       // tt.get("text")

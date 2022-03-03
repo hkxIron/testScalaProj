@@ -1,4 +1,6 @@
+import old.GsonUtil
 import play.api.libs.json.{JsObject, Json, __}
+
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 

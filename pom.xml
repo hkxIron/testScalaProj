@@ -188,7 +188,11 @@
             <artifactId>libthrift</artifactId>
             <version>0.7.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.12.4</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -286,6 +290,37 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.os72</groupId>
+                <artifactId>protoc-jar-maven-plugin</artifactId>
+                <version>3.11.1</version>
+
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <!--ubuntu下如果mvn编译不通过，可以把protocVersion替换为下面的配置-->
+                            <protocArtifact>com.google.protobuf:protoc:3.5.1</protocArtifact>
+                            <!--                            <protocVersion>3.1.0</protocVersion>-->
+                            <inputDirectories>
+                                <include>src/main/proto</include>
+                            </inputDirectories>
+                            <outputDirectory>src/main/generated</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                </configuration>
             </plugin>
         </plugins>
     </build>
