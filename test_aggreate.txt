@@ -1,6 +1,6 @@
 Aggregate By Key unique Results
 bar -> C,D
-foo -> B,A
+foo -> old.B,old.A
 ------------------
 Aggregate By Key sum Results
 bar -> 3

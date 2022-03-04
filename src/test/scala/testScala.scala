@@ -3,6 +3,7 @@ import java.util.{Collections, Comparator, List}
 import java.util.regex.Pattern
 
 import com.google.common.collect.Lists
+import old.prior
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.FunSuite
@@ -30,8 +31,8 @@ class testScala extends FunSuite{
             new Comparator[String](){
                 @Override
                 def compare(s1:String, s2:String):Int = { // 所以排序时会出现错误
-                    if (prior.slotPrior.containsKey(s1) && prior.slotPrior.containsKey(s2))
-                        -prior.slotPrior.get(s1).compareTo(prior.slotPrior.get(s2))
+                    if (old.prior.slotPrior.containsKey(s1) && old.prior.slotPrior.containsKey(s2))
+                        -old.prior.slotPrior.get(s1).compareTo(old.prior.slotPrior.get(s2))
                     else 0
                 }
             }
@@ -42,8 +43,8 @@ class testScala extends FunSuite{
      myList.sort( new Comparator[String](){
           @Override
           def compare(s1:String, s2:String):Int = { // 所以排序时会出现错误
-              if (prior.slotPrior.containsKey(s1) && prior.slotPrior.containsKey(s2))
-                  -prior.slotPrior.get(s1).compareTo(prior.slotPrior.get(s2))
+              if (old.prior.slotPrior.containsKey(s1) && old.prior.slotPrior.containsKey(s2))
+                  -old.prior.slotPrior.get(s1).compareTo(old.prior.slotPrior.get(s2))
               else 0
           }
       }
