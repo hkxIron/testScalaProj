@@ -1,6 +1,5 @@
 package com.dream.csv;
 
-import com.google.common.io.Files;
 import old.GsonUtil;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -46,8 +45,10 @@ public class CSVLoader extends CSVBaseListener {
         currentRow.add(EMPTY);
     }
 
+    // 退出标题行
     @Override
     public void exitHdr(CSVParser.HdrContext ctx) {
+        // 注意:header也是用row来实现的
         header = new ArrayList<>();
         header.addAll(currentRow);
     }
@@ -57,32 +58,33 @@ public class CSVLoader extends CSVBaseListener {
         currentRow = new ArrayList<>();
     }
 
-   @Override
-   public void exitRow(CSVParser.RowContext ctx) {
-       if(ctx.getParent().getRuleIndex() == CSVParser.RULE_hdr){ // 如果当前行是标题行
-           return;
-       }
-       Map<String, String> m = new LinkedHashMap<>();
-       int i = 0;
-       for(String v: currentRow) {
-           m.put(header.get(i), v);
-           i++;
-       }
-       rows.add(m);
-   }
+    @Override
+    public void exitRow(CSVParser.RowContext ctx) {
+        if (ctx.getParent().getRuleIndex() == CSVParser.RULE_hdr) { // 如果当前行是标题行,直接返回
+            return;
+        }
+        // 不是标题行
+        Map<String, String> m = new LinkedHashMap<>();
+        int i = 0;
+        for (String v : currentRow) {
+            m.put(header.get(i), v);
+            i++;
+        }
+        rows.add(m);
+    }
 
-   public static void main(String[] args) {
-       String content = FileUtil.getFileContent("test.csv");
+    public static void main(String[] args) {
+        String content = FileUtil.getFileContent("test.csv");
 
-       CharStream input = CharStreams.fromString(content);
-       CSVLexer lexer =new CSVLexer(input);
-       CommonTokenStream tokens = new CommonTokenStream(lexer);
-       CSVParser parser = new CSVParser(tokens);
-       ParseTree tree = parser.file();
+        CharStream input = CharStreams.fromString(content);
+        CSVLexer lexer = new CSVLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        CSVParser parser = new CSVParser(tokens);
+        ParseTree tree = parser.file();
 
-       ParseTreeWalker walker = new ParseTreeWalker();
-       CSVLoader loader = new CSVLoader();
-       walker.walk(loader, tree);
-       System.out.println(GsonUtil.getUnderScoreGson().toJson(loader.rows));
-   }
+        ParseTreeWalker walker = new ParseTreeWalker();
+        CSVLoader loader = new CSVLoader();
+        walker.walk(loader, tree);
+        System.out.println(GsonUtil.getUnderScoreGson().toJson(loader.rows));
+    }
 }
