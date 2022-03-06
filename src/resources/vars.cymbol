@@ -12,7 +12,7 @@ void g() {
     float y;
     float y=3; // redefined
     y = 9; // y is redefined
-    int t=3; // valid
+    int t=3; // valid var declare
     f();   // backward reference is ok
     z();   // no such function (error)
     y();   // y is not function (error)

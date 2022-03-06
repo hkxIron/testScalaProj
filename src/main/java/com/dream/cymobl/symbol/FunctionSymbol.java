@@ -28,6 +28,13 @@ public class FunctionSymbol extends Symbol implements Scope {
         return null; // not found
     }
 
+    @Override
+    public Symbol resolveCurrentScope(String name) {
+        Symbol s = arguments.get(name);
+        if ( s!=null ) return s;
+        return null;
+    }
+
     public void define(Symbol sym) {
         arguments.put(sym.name, sym);
         sym.scope = this; // track the scope in each symbol

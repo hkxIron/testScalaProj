@@ -25,6 +25,12 @@ public abstract class BaseScope implements Scope {
         return null; // not found
     }
 
+    public Symbol resolveCurrentScope(String name) {
+        Symbol s = symbols.get(name);
+        if ( s!=null ) return s;
+        return null; // not found
+    }
+
     public void define(Symbol sym) {
         symbols.put(sym.name, sym);
         sym.scope = this; // track the scope in each symbol

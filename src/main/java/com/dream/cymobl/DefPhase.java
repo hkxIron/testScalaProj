@@ -63,7 +63,7 @@ public class DefPhase extends CymbolBaseListener {
 
     public void enterVarDecl(CymbolParser.VarDeclContext ctx) {
         Token token = ctx.ID().getSymbol();
-        if(currentScope.resolve(token.getText())!=null){
+        if(currentScope.resolveCurrentScope(token.getText())!=null){
             CheckSymbols.error(token, "has already defined: "+ token.getText());
             isRedined = true;
         }

@@ -19,4 +19,7 @@ public interface Scope {
 
     /** Look up name in this scope or in enclosing scope if not here */
     public Symbol resolve(String name);
+
+    /** Look up name in this scope*/
+    public Symbol resolveCurrentScope(String name);
 }
