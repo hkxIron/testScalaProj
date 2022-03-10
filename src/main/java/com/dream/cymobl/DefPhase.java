@@ -16,7 +16,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 public class DefPhase extends CymbolBaseListener {
     ParseTreeProperty<Scope> scopes = new ParseTreeProperty<Scope>();
     GlobalScope globals;
-    Scope currentScope; // define symbols in this scope
+    Scope currentScope; // addSymbol symbols in this scope
     boolean isRedined = false;
     public void enterFile(CymbolParser.FileContext ctx) {
         globals = new GlobalScope(null);
@@ -34,8 +34,9 @@ public class DefPhase extends CymbolBaseListener {
 		
         // push new scope by making new one that points to enclosing scope
         FunctionSymbol function = new FunctionSymbol(name, type, currentScope);
-        currentScope.define(function); // Define function in current scope
+        currentScope.addSymbol(function); // Define function in current scope
         saveScopeOnTree(ctx, function);      // Push: set function's parent to current
+        // 注意:进入函数之后,会是函数的scope
         currentScope = function;       // Current scope is now function scope
     }
 
@@ -43,7 +44,7 @@ public class DefPhase extends CymbolBaseListener {
 
     public void exitFunctionDecl(CymbolParser.FunctionDeclContext ctx) {
         System.out.println(currentScope);
-        currentScope = currentScope.getEnclosingScope(); // pop scope
+        currentScope = currentScope.getParentScope(); // pop scope
     }
 
     public void enterBlock(CymbolParser.BlockContext ctx) {
@@ -54,16 +55,18 @@ public class DefPhase extends CymbolBaseListener {
 
     public void exitBlock(CymbolParser.BlockContext ctx) {
         System.out.println(currentScope);
-        currentScope = currentScope.getEnclosingScope(); // pop scope
+        currentScope = currentScope.getParentScope(); // pop scope
     }
 
     public void exitFormalParameter(CymbolParser.FormalParameterContext ctx) {
+        // 并未改变scope
         defineVar(ctx.type(), ctx.ID().getSymbol());
     }
 
     public void enterVarDecl(CymbolParser.VarDeclContext ctx) {
         Token token = ctx.ID().getSymbol();
-        if(currentScope.resolveCurrentScope(token.getText())!=null){
+        // 如果重复定义,则不需要再次定义了
+        if(currentScope.findSymbolInCurrentScope(token.getText())!=null){
             CheckSymbols.error(token, "has already defined: "+ token.getText());
             isRedined = true;
         }
@@ -71,6 +74,7 @@ public class DefPhase extends CymbolBaseListener {
 
     public void exitVarDecl(CymbolParser.VarDeclContext ctx) {
         if(isRedined){
+            // 如果重复定义,则不需要再次定义了
             isRedined = false;
         }else{
             defineVar(ctx.type(), ctx.ID().getSymbol());
@@ -81,7 +85,7 @@ public class DefPhase extends CymbolBaseListener {
         int typeTokenType = typeCtx.start.getType();
         Symbol.Type type = CheckSymbols.getType(typeTokenType);
         VariableSymbol var = new VariableSymbol(nameToken.getText(), type);
-        currentScope.define(var); // Define symbol in current scope
+        currentScope.addSymbol(var); // Define symbol in current scope
         // 注意:定义局部变量并不会引起当前域的变化
     }
 }

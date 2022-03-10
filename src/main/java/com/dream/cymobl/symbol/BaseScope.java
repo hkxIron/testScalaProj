@@ -17,26 +17,26 @@ public abstract class BaseScope implements Scope {
     public BaseScope(Scope enclosingScope) { this.enclosingScope = enclosingScope;  }
 
     // Look up name in this scope
-    public Symbol resolve(String name) {
+    public Symbol findSymbol(String name) {
         Symbol s = symbols.get(name);
         if ( s!=null ) return s;
         // if not here, check any enclosing scope
-        if ( enclosingScope != null ) return enclosingScope.resolve(name);
+        if ( enclosingScope != null ) return enclosingScope.findSymbol(name);
         return null; // not found
     }
 
-    public Symbol resolveCurrentScope(String name) {
+    public Symbol findSymbolInCurrentScope(String name) {
         Symbol s = symbols.get(name);
         if ( s!=null ) return s;
         return null; // not found
     }
 
-    public void define(Symbol sym) {
+    public void addSymbol(Symbol sym) {
         symbols.put(sym.name, sym);
         sym.scope = this; // track the scope in each symbol
     }
 
-    public Scope getEnclosingScope() { return enclosingScope; }
+    public Scope getParentScope() { return enclosingScope; }
 
     public String toString() { return getScopeName()+":"+symbols.keySet().toString(); }
 }

@@ -14,7 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 public class RefPhase extends CymbolBaseListener {
     ParseTreeProperty<Scope> scopes;
     GlobalScope globals;
-    Scope currentScope; // resolve symbols starting in this scope
+    Scope currentScope; // findSymbol symbols starting in this scope
 
     public RefPhase(GlobalScope globals, ParseTreeProperty<Scope> scopes) {
         this.scopes = scopes;
@@ -28,19 +28,19 @@ public class RefPhase extends CymbolBaseListener {
         currentScope = scopes.get(ctx);
     }
     public void exitFunctionDecl(CymbolParser.FunctionDeclContext ctx) {
-        currentScope = currentScope.getEnclosingScope();
+        currentScope = currentScope.getParentScope();
     }
 	
     public void enterBlock(CymbolParser.BlockContext ctx) {
         currentScope = scopes.get(ctx);
     }
     public void exitBlock(CymbolParser.BlockContext ctx) {
-        currentScope = currentScope.getEnclosingScope();
+        currentScope = currentScope.getParentScope();
     }
 
     public void exitVar(CymbolParser.VarContext ctx) {
         String name = ctx.ID().getSymbol().getText();
-        Symbol var = currentScope.resolve(name);
+        Symbol var = currentScope.findSymbol(name);
         if ( var==null ) {
             CheckSymbols.error(ctx.ID().getSymbol(), "no such variable: "+name);
         }
@@ -52,7 +52,7 @@ public class RefPhase extends CymbolBaseListener {
     public void exitCall(CymbolParser.CallContext ctx) {
         // can only handle f(...) not expr(...)
         String funcName = ctx.ID().getText();
-        Symbol meth = currentScope.resolve(funcName);
+        Symbol meth = currentScope.findSymbol(funcName);
         if ( meth==null ) {
             CheckSymbols.error(ctx.ID().getSymbol(), "no such function: "+funcName);
         }

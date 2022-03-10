@@ -12,14 +12,14 @@ public interface Scope {
     public String getScopeName();
 
     /** Where to look next for symbols , ie: parent scope*/
-    public Scope getEnclosingScope();
+    public Scope getParentScope();
 
     /** Define a symbol in the current scope */
-    public void define(Symbol sym);
+    public void addSymbol(Symbol sym);
 
     /** Look up name in this scope or in enclosing scope if not here */
-    public Symbol resolve(String name);
+    public Symbol findSymbol(String name);
 
     /** Look up name in this scope*/
-    public Symbol resolveCurrentScope(String name);
+    public Symbol findSymbolInCurrentScope(String name);
 }
