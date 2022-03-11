@@ -125,7 +125,7 @@ public class TestLabel {
             for(int j = 0; j < 4; j++){
                 System.out.println("i: " + i + " j:" + j + ", break  from INNER label");
                 if(i == 1){
-                    break;
+                    break; // 只能break内层循环，不能中断外层循环
                 }
             }
         }
