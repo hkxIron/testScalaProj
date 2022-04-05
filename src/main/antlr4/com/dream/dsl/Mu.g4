@@ -12,7 +12,7 @@ stat
  : assignment
  | if_stat
  | while_stat
- | log
+ | print
  | OTHER {System.err.println("unknown char: " + $OTHER.text);}
  ;
 
@@ -24,12 +24,12 @@ if_stat
  : IF condition_block (ELSE IF condition_block)* (ELSE stat_block)?
  ;
 
-condition_block
+condition_block // (condidtion) { statment; }
  : expr stat_block
  ;
 
 stat_block
- : OBRACE block CBRACE // { blcok }
+ : OBRACE block CBRACE // { block }
  | stat
  ;
 
@@ -37,13 +37,14 @@ while_stat
  : WHILE expr stat_block
  ;
 
-log
- : LOG expr SCOL  // 数学运算
+print
+ : PRINT expr SCOL  // 打印算子, log(a+b)
  ;
 
 expr
  : expr POW<assoc=right> expr           #powExpr
- | MINUS expr                           #unaryMinusExpr
+ //: expr POW expr           #powExpr
+ | MINUS expr                           #unaryMinusExpr // -234
  | NOT expr                             #notExpr
  | expr op=(MULT | DIV | MOD) expr      #multiplicationExpr
  | expr op=(PLUS | MINUS) expr          #additiveExpr
@@ -56,9 +57,9 @@ expr
 
 atom
  : OPAR expr CPAR #parExpr // ( expr )
- | (INT | FLOAT)  #numberAtom
- | (TRUE | FALSE) #booleanAtom
- | ID             #idAtom
+ | (INT | FLOAT)  #numberAtom // (3)
+ | (TRUE | FALSE) #booleanAtom // (true)
+ | ID             #idAtom // a
  | STRING         #stringAtom
  | NIL            #nilAtom
  ;
@@ -92,7 +93,7 @@ NIL : 'nil';
 IF : 'if';
 ELSE : 'else';
 WHILE : 'while';
-LOG : 'log';
+PRINT : 'print';
 
 ID
  : [a-zA-Z_] [a-zA-Z_0-9]*

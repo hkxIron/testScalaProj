@@ -25,6 +25,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.8</version>
+        </dependency>
+        <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
             <version>4.7.1</version>
@@ -314,14 +319,13 @@
                     <listener>true</listener>
                     <!--生成解析树访问者接口和基类。-->
                     <visitor>true</visitor>
-                    <treatWarningsAsErrors>true</treatWarningsAsErrors>
+                    <treatWarningsAsErrors>false</treatWarningsAsErrors>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>com.github.os72</groupId>
                 <artifactId>protoc-jar-maven-plugin</artifactId>
                 <version>3.11.1</version>
-
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -331,7 +335,7 @@
                         <configuration>
                             <!--ubuntu下如果mvn编译不通过，可以把protocVersion替换为下面的配置-->
                             <protocArtifact>com.google.protobuf:protoc:3.5.1</protocArtifact>
-                            <!--                            <protocVersion>3.1.0</protocVersion>-->
+                                                        <!--<protocVersion>3.1.0</protocVersion>-->
                             <inputDirectories>
                                 <include>src/main/proto</include>
                             </inputDirectories>

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message DSLValue{
+    oneof value{
+        int32 intValue=1;
+        string strValue=2;
+        int64 longValue=3;
+        double doubleValue=4;
+        bool boolValue=5;
+    }
+}

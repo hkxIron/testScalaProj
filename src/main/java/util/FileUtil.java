@@ -39,7 +39,9 @@ public class FileUtil {
         String content = "";
         try {
             content = Files.asCharSource(new File(fileAbsPath), StandardCharsets.UTF_8).read();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            System.out.println("read file:" + filePath+" error");
+        }
         return content;
     }
 

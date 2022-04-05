@@ -1,0 +1,25 @@
+a = 1;
+b =2;
+c=a+b;
+
+if (c>2){
+    d = c*2;
+} else if(c>1) {
+    d = c+2;
+}else {
+    d = c-2;
+}
+
+e = 10;
+sum = 0;
+while(e>0){
+    sum=sum+e;
+    e=e-1;
+}
+
+print("c:"+c);
+print("e:"+e);
+print("sum:"+sum);
+
+f="nil";
+print("f:"+f);

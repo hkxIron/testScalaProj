@@ -4,6 +4,7 @@ package com.dream.dsl;
  * @author: kexin
  * @date: 2022/4/4 13:38
  **/
+import lombok.Getter;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.HashMap;
@@ -15,7 +16,9 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
     // used to compare floating point numbers
     public static final double SMALL_VALUE = 0.00000000001;
 
+    // 只有全局变量,没有局部变量
     // store variables (there's only one global scope!)
+    @Getter
     private Map<String, Value> memory = new HashMap<String, Value>();
 
     // assignment/id overrides
@@ -45,6 +48,7 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
         return new Value(str);
     }
 
+    // 所有的数字都以double来表示
     @Override
     public Value visitNumberAtom(MuParser.NumberAtomContext ctx) {
         return new Value(Double.valueOf(ctx.getText()));
@@ -61,6 +65,7 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
     }
 
     // expr overrides
+    // 计算括号的表达式
     @Override
     public Value visitParExpr(MuParser.ParExprContext ctx) {
         return this.visit(ctx.expr());
@@ -87,7 +92,6 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
 
     @Override
     public Value visitMultiplicationExpr(@NotNull MuParser.MultiplicationExprContext ctx) {
-
         Value left = this.visit(ctx.expr(0));
         Value right = this.visit(ctx.expr(1));
 
@@ -113,7 +117,7 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
             case MuParser.PLUS:
                 return left.isDouble() && right.isDouble() ?
                         new Value(left.asDouble() + right.asDouble()) :
-                        new Value(left.asString() + right.asString());
+                        new Value(left.asString() + right.asString()); // 只要二者均不是double,则都会toString后用字符串连接
             case MuParser.MINUS:
                 return new Value(left.asDouble() - right.asDouble());
             default:
@@ -121,9 +125,9 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
         }
     }
 
+    // 关系运算, >,<,>=,<=
     @Override
     public Value visitRelationalExpr(@NotNull MuParser.RelationalExprContext ctx) {
-
         Value left = this.visit(ctx.expr(0));
         Value right = this.visit(ctx.expr(1));
 
@@ -150,8 +154,8 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
         switch (ctx.op.getType()) {
             case MuParser.EQ:
                 return left.isDouble() && right.isDouble() ?
-                        new Value(Math.abs(left.asDouble() - right.asDouble()) < SMALL_VALUE) :
-                        new Value(left.equals(right));
+                        new Value(Math.abs(left.asDouble() - right.asDouble()) < SMALL_VALUE) : // 数值相等
+                        new Value(left.equals(right)); // 否则用对象相等
             case MuParser.NEQ:
                 return left.isDouble() && right.isDouble() ?
                         new Value(Math.abs(left.asDouble() - right.asDouble()) >= SMALL_VALUE) :
@@ -161,6 +165,7 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
         }
     }
 
+    // 逻辑运算
     @Override
     public Value visitAndExpr(MuParser.AndExprContext ctx) {
         Value left = this.visit(ctx.expr(0));
@@ -175,27 +180,24 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
         return new Value(left.asBoolean() || right.asBoolean());
     }
 
-    // log override
+    // print,打印变量
     @Override
-    public Value visitLog(MuParser.LogContext ctx) {
+    public Value visitPrint(MuParser.PrintContext ctx) {
         Value value = this.visit(ctx.expr());
-        System.out.println(value);
+        System.out.println(value.asString());
         return value;
     }
 
     // if override
     @Override
     public Value visitIf_stat(MuParser.If_statContext ctx) {
-
         List<MuParser.Condition_blockContext> conditions =  ctx.condition_block();
-
         boolean evaluatedBlock = false;
 
+        // 对每一个condition条件进行运算
         for(MuParser.Condition_blockContext condition : conditions) {
-
             Value evaluated = this.visit(condition.expr());
-
-            if(evaluated.asBoolean()) {
+            if(evaluated.asBoolean()) { // 该条件满足
                 evaluatedBlock = true;
                 // evaluate this block whose expr==true
                 this.visit(condition.stat_block());
@@ -203,29 +205,27 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
             }
         }
 
+        // 运行else分支
         if(!evaluatedBlock && ctx.stat_block() != null) {
             // evaluate the else-stat_block (if present == not null)
             this.visit(ctx.stat_block());
         }
 
-        return Value.VOID;
+        return Value.NULL; // if-else不返回任何值
     }
 
     // while override
     @Override
     public Value visitWhile_stat(MuParser.While_statContext ctx) {
-
         Value value = this.visit(ctx.expr());
 
         while(value.asBoolean()) {
-
             // evaluate the code block
             this.visit(ctx.stat_block());
-
             // evaluate the expression
             value = this.visit(ctx.expr());
         }
 
-        return Value.VOID;
+        return Value.NULL; // while不返回任何值
     }
 }
