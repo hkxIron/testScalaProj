@@ -14,12 +14,12 @@ e = 10;
 sum = 0;
 while(e>0){
     sum=sum+e;
-    e=e-1;
+    e--;
 }
 
 print("c:"+c);
 print("e:"+e);
 print("sum:"+sum);
 
-f="nil";
+f=nil;
 print("f:"+f);

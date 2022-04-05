@@ -18,7 +18,13 @@ stat
 
 assignment
  : ID ASSIGN expr SCOL
+ | changeAndReturn
  ;
+
+changeAndReturn
+    :op=(PLUS_PLUS|MINUS_MINUS) ID # changeThenReturn
+    | ID op =(PLUS_PLUS|MINUS_MINUS) # returnThenChange
+    ;
 
 if_stat
  : IF condition_block (ELSE IF condition_block)* (ELSE stat_block)?
@@ -43,8 +49,8 @@ print
 
 expr
  : expr POW<assoc=right> expr           #powExpr
- //: expr POW expr           #powExpr
  | MINUS expr                           #unaryMinusExpr // -234
+ | changeAndReturn  # changeAndReturnExpr
  | NOT expr                             #notExpr
  | expr op=(MULT | DIV | MOD) expr      #multiplicationExpr
  | expr op=(PLUS | MINUS) expr          #additiveExpr
@@ -60,8 +66,8 @@ atom
  | (INT | FLOAT)  #numberAtom // (3)
  | (TRUE | FALSE) #booleanAtom // (true)
  | ID             #idAtom // a
- | STRING         #stringAtom
- | NIL            #nilAtom
+ | STRING         #stringAtom // "abc"
+ | NIL            #nilAtom // nil
  ;
 
 OR : '||';
@@ -73,7 +79,9 @@ LT : '<';
 GTEQ : '>=';
 LTEQ : '<=';
 PLUS : '+';
+PLUS_PLUS: '++';
 MINUS : '-';
+MINUS_MINUS : '--';
 MULT : '*';
 DIV : '/';
 MOD : '%';
