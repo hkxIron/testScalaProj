@@ -297,11 +297,25 @@
                 <version>4.7.1</version>
                 <executions>
                     <execution>
+                        <id>antlr</id>
                         <goals>
                             <goal>antlr4</goal>
                         </goals>
+                        <phase>compile</phase>
                     </execution>
                 </executions>
+
+                <configuration>
+                    <!--ANTLR语法文件(*.g4)所在的目录。-->
+                    <sourceDirectory>src/main/antlr4</sourceDirectory>
+                    <!--&lt;!&ndash;指定生成Java文件的输出目录。&ndash;&gt;-->
+                    <!--<outputDirectory>src/main/java</outputDirectory>-->
+                    <!--生成解析树侦听器接口和基类。-->
+                    <listener>true</listener>
+                    <!--生成解析树访问者接口和基类。-->
+                    <visitor>true</visitor>
+                    <treatWarningsAsErrors>true</treatWarningsAsErrors>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.github.os72</groupId>
