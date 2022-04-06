@@ -58,6 +58,7 @@ expr
  | expr AND expr                        #andExpr
  | expr OR expr                         #orExpr
  | atom                                 #atomExpr
+ | change_self                          #changeSelfExpr
  ;
 
 atom
@@ -67,7 +68,6 @@ atom
  | ID             #idAtom // a
  | STRING         #stringAtom // "abc"
  | NIL            #nilAtom // nil
- | change_self    #changeSelf
  ;
 
 change_self
