@@ -12,9 +12,11 @@ if (c>2){
 
 e = 10;
 sum = 0;
+g=0;
 while(e>0){
     sum=sum+e;
     e--;
+    print("g:"+(++g));
 }
 
 print("c:"+c);

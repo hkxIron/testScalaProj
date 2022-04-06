@@ -13,21 +13,21 @@ stat
  | if_stat
  | while_stat
  | print
+ | change_self_stat
  | OTHER {System.err.println("unknown char: " + $OTHER.text);}
  ;
 
 assignment
  : ID ASSIGN expr SCOL
- | changeAndReturn
  ;
 
-changeAndReturn
-    :op=(PLUS_PLUS|MINUS_MINUS) ID # changeThenReturn
-    | ID op =(PLUS_PLUS|MINUS_MINUS) # returnThenChange
-    ;
 
 if_stat
  : IF condition_block (ELSE IF condition_block)* (ELSE stat_block)?
+ ;
+
+change_self_stat
+ :expr SCOL?
  ;
 
 condition_block // (condidtion) { statment; }
@@ -50,7 +50,6 @@ print
 expr
  : expr POW<assoc=right> expr           #powExpr
  | MINUS expr                           #unaryMinusExpr // -234
- | changeAndReturn  # changeAndReturnExpr
  | NOT expr                             #notExpr
  | expr op=(MULT | DIV | MOD) expr      #multiplicationExpr
  | expr op=(PLUS | MINUS) expr          #additiveExpr
@@ -68,7 +67,13 @@ atom
  | ID             #idAtom // a
  | STRING         #stringAtom // "abc"
  | NIL            #nilAtom // nil
+ | change_self    #changeSelf
  ;
+
+change_self
+    : op=(PLUS_PLUS|MINUS_MINUS) ID # changeThenGet
+    | ID op =(PLUS_PLUS|MINUS_MINUS) # getThenChange
+    ;
 
 OR : '||';
 AND : '&&';
