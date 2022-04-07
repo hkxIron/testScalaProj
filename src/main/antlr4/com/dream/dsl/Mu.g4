@@ -14,6 +14,7 @@ stat
  | while_stat
  | print
  | change_self_stat
+ | for_stat
  | OTHER {System.err.println("unknown char: " + $OTHER.text);}
  ;
 
@@ -26,8 +27,28 @@ if_stat
  : IF condition_block (ELSE IF condition_block)* (ELSE stat_block)?
  ;
 
+ for_stat
+ : FOR OPAR for_init_stat for_condition_stat for_recurrent_stat CPAR
+  stat_block
+ ;
+
+for_init_stat
+: assignment
+|
+;
+
+for_condition_stat
+: expr SCOL
+|
+;
+
+for_recurrent_stat
+: expr
+|
+;
+
 change_self_stat
- :expr SCOL?
+ :expr SCOL
  ;
 
 condition_block // (condidtion) { statment; }
@@ -47,19 +68,30 @@ print
  : PRINT expr SCOL  // 打印算子, log(a+b)
  ;
 
-expr
- : expr POW<assoc=right> expr           #powExpr
+expr: expr POW<assoc=right> expr        #powExpr
  | MINUS expr                           #unaryMinusExpr // -234
  | NOT expr                             #notExpr
  | expr op=(MULT | DIV | MOD) expr      #multiplicationExpr
  | expr op=(PLUS | MINUS) expr          #additiveExpr
+ //| logical_expr                         #logicalExpr
  | expr op=(LTEQ | GTEQ | LT | GT) expr #relationalExpr
  | expr op=(EQ | NEQ) expr              #equalityExpr
+ //| relation_expr                        #relationAllExpr
  | expr AND expr                        #andExpr
  | expr OR expr                         #orExpr
  | atom                                 #atomExpr
- | change_self                          #changeSelfExpr
+ | change_self_expr                     #changeSelfExpr
  ;
+
+//logical_expr
+// : expr op=(LTEQ | GTEQ | LT | GT) expr #relationalExpr
+// | expr op=(EQ | NEQ) expr              #equalityExpr
+// ;
+
+/*relation_expr
+ : expr AND expr                        #andExpr
+ | expr OR expr                         #orExpr
+ ;*/
 
 atom
  : OPAR expr CPAR #parExpr // ( expr )
@@ -70,7 +102,7 @@ atom
  | NIL            #nilAtom // nil
  ;
 
-change_self
+change_self_expr
     : op=(PLUS_PLUS|MINUS_MINUS) ID # changeThenGet
     | ID op =(PLUS_PLUS|MINUS_MINUS) # getThenChange
     ;
@@ -107,6 +139,7 @@ IF : 'if';
 ELSE : 'else';
 WHILE : 'while';
 PRINT : 'print';
+FOR: 'for';
 
 ID
  : [a-zA-Z_] [a-zA-Z_0-9]*

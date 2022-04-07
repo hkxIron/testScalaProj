@@ -5,6 +5,7 @@ package com.dream.dsl;
  * @date: 2022/4/4 13:38
  **/
 import lombok.Getter;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.HashMap;
@@ -108,6 +109,39 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
     }
 
     @Override
+    public Value visitChangeThenGet(@NotNull MuParser.ChangeThenGetContext ctx) {
+        return setGetValue(ctx.ID().getText(), ctx.op, true);
+    }
+
+    private Value setGetValue(String id, Token op, boolean setThenGetFlag){
+        Value oldValue = memory.get(id);
+        Value newValue;
+        int diff;
+        switch (op.getType()){
+            case MuParser.MINUS_MINUS:
+                diff=-1;
+                break;
+            case MuParser.PLUS_PLUS:
+                diff=1;
+                break;
+            default:
+                throw new RuntimeException("unknown operator: " + MuParser.tokenNames[op.getType()]);
+        }
+        newValue = new Value(oldValue.asDouble()+diff);
+        memory.put(id, newValue);
+        if(setThenGetFlag){
+            return newValue;
+        }else{
+            return oldValue;
+        }
+    }
+
+    @Override
+    public Value visitGetThenChange(@NotNull MuParser.GetThenChangeContext ctx) {
+        return setGetValue(ctx.ID().getText(), ctx.op, false);
+    }
+
+    @Override
     public Value visitAdditiveExpr(@NotNull MuParser.AdditiveExprContext ctx) {
 
         Value left = this.visit(ctx.expr(0));
@@ -186,6 +220,20 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
         Value value = this.visit(ctx.expr());
         System.out.println(value.asString());
         return value;
+    }
+
+    @Override
+    public Value visitFor_stat(MuParser.For_statContext ctx){
+        this.visit(ctx.for_init_stat());
+        MuParser.ExprContext condExpr = ctx.for_condition_stat().expr();
+        Value conditionValue = this.visit(condExpr);
+        while (conditionValue.asBoolean()) {
+            this.visit(ctx.stat_block());
+            // 自加
+            this.visit(ctx.for_recurrent_stat());
+            conditionValue = this.visit(condExpr);
+        }
+        return Value.NULL; // for不返回任何值
     }
 
     // if override

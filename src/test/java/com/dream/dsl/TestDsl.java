@@ -38,4 +38,19 @@ public class TestDsl {
         System.out.println("vars:");
         System.out.println(gson.toJson(visitor.getMemory()));
     }
+
+    @Test
+    public void testFor() throws Exception {
+        //MuLexer lexer = new MuLexer(new ANTLRFileStream(args[0]));
+        String content = FileUtil.getFileContent("test_dsl_for.txt");
+        CharStream input = CharStreams.fromString(content);
+        MuLexer lexer = new MuLexer(input);
+        MuParser parser = new MuParser(new CommonTokenStream(lexer));
+        ParseTree tree = parser.parse();
+        DslMuVisitor visitor = new DslMuVisitor();
+//        visitor.visit(tree);
+        Value value = visitor.visit(tree);
+        //System.out.println(value);
+        //System.out.println("vars:");
+    }
 }
