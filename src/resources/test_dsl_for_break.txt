@@ -1,0 +1,17 @@
+
+for(i=0;i<10;i++){
+    if(i>3) {
+        break;
+    }
+    print("i:"+i);
+}
+
+print("");
+
+for(i=0;i<10;i++){
+    print("i:"+i);
+    if(i>3) {
+        continue;
+    }
+    print("hello:"+i);
+}
