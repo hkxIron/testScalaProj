@@ -30,16 +30,17 @@ if_stat
  for_stat
  : FOR OPAR for_init_stat for_condition_stat for_recurrent_stat CPAR
   stat_block
+  //(stat_block|(OBRACE CBRACE))
  ;
 
 for_init_stat
 : assignment
-|
+| SCOL
 ;
 
 for_condition_stat
 : expr SCOL
-|
+| SCOL
 ;
 
 for_recurrent_stat
