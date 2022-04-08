@@ -1,5 +1,7 @@
 package com.dream.dsl;
 
+import lombok.Getter;
+
 /**
  * @author: kexin
  * @date: 2022/4/4 16:31
@@ -10,12 +12,18 @@ public class Value {
         BOOL,
         DOUBLE,
         INT,
-        VOID
+        IS_BREAK,
+        IS_CONTINUE
     }
 
-    public static Value NULL = new Value(null);
+    public static Value NULL = new Value((String)null);
+    @Getter
     private Type type;
     private Object obj;
+
+    public Value(Type type){
+        this.type = type;
+    }
 
     public Value(String s){
        this.obj =(Object) s;

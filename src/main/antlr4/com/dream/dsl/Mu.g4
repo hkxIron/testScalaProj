@@ -15,6 +15,7 @@ stat
  | print
  | change_self_stat
  | for_stat
+ | break_continue_stat
  | OTHER {System.err.println("unknown char: " + $OTHER.text);}
  ;
 
@@ -22,6 +23,10 @@ assignment
  : ID ASSIGN expr SCOL
  ;
 
+break_continue_stat
+:'break' SCOL #break_stat
+|'continue' SCOL #continue_stat
+;
 
 if_stat
  : IF condition_block (ELSE IF condition_block)* (ELSE stat_block)?

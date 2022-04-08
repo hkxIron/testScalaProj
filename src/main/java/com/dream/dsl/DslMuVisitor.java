@@ -4,6 +4,7 @@ package com.dream.dsl;
  * @author: kexin
  * @date: 2022/4/4 13:38
  **/
+
 import lombok.Getter;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -21,6 +22,8 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
     // store variables (there's only one global scope!)
     @Getter
     private Map<String, Value> memory = new HashMap<String, Value>();
+    private boolean isBreak = false;
+    private boolean isContinue = false;
 
     // assignment/id overrides
     @Override
@@ -34,7 +37,7 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
     public Value visitIdAtom(MuParser.IdAtomContext ctx) {
         String id = ctx.getText();
         Value value = memory.get(id);
-        if(value == null) {
+        if (value == null) {
             throw new RuntimeException("no such variable: " + id);
         }
         return value;
@@ -62,7 +65,7 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
 
     @Override
     public Value visitNilAtom(MuParser.NilAtomContext ctx) {
-        return new Value(null);
+        return new Value((String) null);
     }
 
     // expr overrides
@@ -113,25 +116,25 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
         return setGetValue(ctx.ID().getText(), ctx.op, true);
     }
 
-    private Value setGetValue(String id, Token op, boolean setThenGetFlag){
+    private Value setGetValue(String id, Token op, boolean setThenGetFlag) {
         Value oldValue = memory.get(id);
         Value newValue;
         int diff;
-        switch (op.getType()){
+        switch (op.getType()) {
             case MuParser.MINUS_MINUS:
-                diff=-1;
+                diff = -1;
                 break;
             case MuParser.PLUS_PLUS:
-                diff=1;
+                diff = 1;
                 break;
             default:
                 throw new RuntimeException("unknown operator: " + MuParser.tokenNames[op.getType()]);
         }
-        newValue = new Value(oldValue.asDouble()+diff);
+        newValue = new Value(oldValue.asDouble() + diff);
         memory.put(id, newValue);
-        if(setThenGetFlag){
+        if (setThenGetFlag) {
             return newValue;
-        }else{
+        } else {
             return oldValue;
         }
     }
@@ -222,30 +225,17 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
         return value;
     }
 
-    @Override
-    public Value visitFor_stat(MuParser.For_statContext ctx){
-        this.visit(ctx.for_init_stat());
-        MuParser.ExprContext condExpr = ctx.for_condition_stat().expr();
-        Value conditionValue = this.visit(condExpr);
-        while (conditionValue.asBoolean()) {
-            this.visit(ctx.stat_block());
-            // 自加
-            this.visit(ctx.for_recurrent_stat());
-            conditionValue = this.visit(condExpr);
-        }
-        return Value.NULL; // for不返回任何值
-    }
 
     // if override
     @Override
     public Value visitIf_stat(MuParser.If_statContext ctx) {
-        List<MuParser.Condition_blockContext> conditions =  ctx.condition_block();
+        List<MuParser.Condition_blockContext> conditions = ctx.condition_block();
         boolean evaluatedBlock = false;
 
         // 对每一个condition条件进行运算
-        for(MuParser.Condition_blockContext condition : conditions) {
+        for (MuParser.Condition_blockContext condition : conditions) {
             Value evaluated = this.visit(condition.expr());
-            if(evaluated.asBoolean()) { // 该条件满足
+            if (evaluated.asBoolean()) { // 该条件满足
                 evaluatedBlock = true;
                 // evaluate this block whose expr==true
                 this.visit(condition.stat_block());
@@ -254,7 +244,7 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
         }
 
         // 运行else分支
-        if(!evaluatedBlock && ctx.stat_block() != null) {
+        if (!evaluatedBlock && ctx.stat_block() != null) {
             // evaluate the else-stat_block (if present == not null)
             this.visit(ctx.stat_block());
         }
@@ -267,13 +257,73 @@ public class DslMuVisitor extends MuBaseVisitor<Value> {
     public Value visitWhile_stat(MuParser.While_statContext ctx) {
         Value value = this.visit(ctx.expr());
 
-        while(value.asBoolean()) {
+        outer:
+        while (value.asBoolean()) {
             // evaluate the code block
-            this.visit(ctx.stat_block());
+            //this.visit(ctx.stat_block()); // 原来的
+            List<MuParser.StatContext> stats = ctx.stat_block().block().stat();
+            for (MuParser.StatContext stat : stats) {
+                this.visit(stat);
+                if (this.isBreak) {
+                    this.isBreak =false;
+                    break outer; // break直接跳到最外层
+                } else if (this.isContinue) {
+                    this.isContinue =false; // 跳过余下的stat
+                    break;
+                }
+/*                Value statValue = this.visit(stat);
+                if (statValue != null) {
+                    if (statValue.getType() == Value.Type.IS_BREAK) {
+                        break outer;
+                    } else if (statValue.getType() == Value.Type.IS_CONTINUE) {
+                        break;
+                    }
+                }*/
+            }
             // evaluate the expression
             value = this.visit(ctx.expr());
         }
 
         return Value.NULL; // while不返回任何值
+    }
+
+    @Override
+    public Value visitFor_stat(MuParser.For_statContext ctx) {
+        this.visit(ctx.for_init_stat());
+        MuParser.ExprContext condExpr = ctx.for_condition_stat().expr();
+        Value conditionValue = this.visit(condExpr);
+        outer:
+        while (conditionValue.asBoolean()) {
+            //this.visit(ctx.stat_block());
+            List<MuParser.StatContext> stats = ctx.stat_block().block().stat();
+            for (MuParser.StatContext stat : stats) {
+                this.visit(stat);
+                if (this.isBreak) {
+                    this.isBreak =false;
+                    break outer; // break直接跳到最外层
+                } else if (this.isContinue) {
+                    this.isContinue =false; // 跳过余下的stat
+                    break;
+                }
+            }
+            // 自加(i++)
+            this.visit(ctx.for_recurrent_stat());
+            conditionValue = this.visit(condExpr);
+        }
+        return Value.NULL; // for不返回任何值
+    }
+
+    @Override
+    public Value visitBreak_stat(MuParser.Break_statContext ctx) {
+        //return new Value(Value.Type.IS_BREAK);
+        this.isBreak = true;
+        return Value.NULL;
+    }
+
+    @Override
+    public Value visitContinue_stat(MuParser.Continue_statContext ctx) {
+        this.isContinue = true;
+        return Value.NULL;
+        //return new Value(Value.Type.IS_CONTINUE);
     }
 }
